@@ -1,0 +1,18 @@
+BeautifulSoup==3.2.1
+Django==1.4.3
+PIL==1.1.7
+South==0.7.6
+Werkzeug==0.8.3
+Whoosh==2.4.1
+django-extensions==1.0.2
+django-filter==0.5.4
+django-generic-ratings==0.7
+django-haystack==1.2.7
+-e git://github.com/thornomad/django-hitcount.git@37501420baef9d8e490a25dbe8786d506ae40de5#egg=django_hitcount-dev
+django-i18nurls==0.7
+django-tagging==0.3.1
+docutils==0.10
+ipython==0.13.1
+readline==6.2.4.1
+wsgiref==0.1.2
+xapian-haystack==1.1.5beta
