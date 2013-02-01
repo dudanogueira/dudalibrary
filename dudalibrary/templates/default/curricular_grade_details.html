@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div id="browse-curricular">
+	
+	<div id="show-activity">
+		<h1>{{curricular_grade}}</h1>
+        
+        
+        <ul class="nav nav-tabs" id="myTab">
+            {% for class in curricular_grade.subjectclass_set.all %}
+            <li class="{% if forloop.first %}active{%endif%}"><a href="#class-{{class.id}}" data-toggle="tab">{{class}}</a></li>
+            {% endfor %}
+            {% if request.user.is_staff %}
+            <li><a href="#add-class" data-toggle="tab">{% trans "Add Class" %}</a>
+            {% endif %}
+            
+        </ul>
+ 
+        <div class="tab-content">
+            {% for class in curricular_grade.subjectclass_set.all %}
+            <div class="tab-pane {% if forloop.first %}active{%endif%}" id="class-{{class.id}}">
+      			{% for subject in class.subject_set.all %}
+      				<h4><strong>{{subject}}</strong></h4>
+      				<ul>
+      				{% for activity in subject.activity_set.all %}
+      					<li><a href="{% url activity_details activity.id %}">{{activity}} - {{activity.description}}</a></li>
+      				{% endfor %}
+      				</ul>
+      			{% endfor %}
+            </div>
+            {% endfor %}
+            <div class="tab-pane" id="add-class">
+                <h2>{% trans "Add a new Class" %}
+            </div>
+        </div>
+        
+        
+
+ 
+        <script>
+          $(function () {
+            $('#myTab a:first').tab('show');
+          })
+          $('#myTab a').click(function (e) {
+            e.preventDefault();
+            $(this).tab('show');
+          })
+        </script>        
+
+	</div>
+</div>
+
+{% endblock %}

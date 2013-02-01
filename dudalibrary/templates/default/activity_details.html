@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+
+<div id="show-activity">
+	<h1>{{activity}}</h1>
+	<h2>{{activity.subject}}</h2>
+	<p>{{activity.description}}</p>
+	
+	{% for activity_unit in activity.activityitem_set.all %}
+		{% ifequal activity_unit.content_type.model "resource" %}
+        
+        <div class="well">
+                              <h3>{{forloop.counter}} - {{activity_unit.item.title}}</h3>
+            <div class="row-fluid">
+              <div class="span1">
+                  <a href="{{activity_unit.item.content_url}}"><img alt="{% trans "Play this Resource" %}" src="{{MEDIA_URL}}img/icons/play.png" class="button"/></a> <a href="{{activity_unit.item.content_url_path}}"><img src="{{MEDIA_URL}}img/icons/folder.png" class="button" alt="{% trans "See Resource Folder" %}"/></a>
+              </div>
+              
+              <div class="span11">
+                  <p>{{activity_unit.item.description}}</p>
+              </div>
+              
+            </div>
+        </div>
+        
+		{% else %}
+        
+		{% ifequal activity_unit.content_type.model "resourcequeue" %}
+        
+        <div class="well">
+            <h3>{{forloop.counter}} - {% trans "Queued" %}: {{activity_unit.item.identifier_id}}</h3>
+            
+            <div class="row-fluid">
+              <div class="span1">
+                  <a href="{{activity_unit.item.full_url}}"><img alt="{% trans "Play this Resource" %}" src="{{MEDIA_URL}}img/icons/play.png" class="button"/></a>
+                  
+              </div>
+              
+              <div class="span11">
+              <p>{% blocktrans with date=activity_unit.item.created|date:"DATETIME_FORMAT" user=activity_unit.item.request_user %}Requested at {{date}} by {{user}}{%endblocktrans%}</p>
+              <a href="{{activity_unit.item.full_url}}" class="btn btn-info"><i class="icon-globe icon-white"></i>{% trans "Access this Resource" %}</a>
+              </div>
+          </div>
+        </div>
+        {% endifequal %}
+        
+		{% endifequal %}
+	{% endfor %}
+
+    <script language="javascript">
+    $(document).ready(function(){
+    	$('#activity_sort').sortable({
+    		update: function(event, ui) {
+    			var fruitOrder = $(this).sortable('toArray').toString();
+    			$.get('update-sort.cfm', {sort_order:fruitOrder});
+    		}
+    	});
+    });
+    </script>
+    {% if request.user.is_staff %}
+    
+    <h3>{% trans "Activity Manager" %}</h3>
+    <div class="tabbable"> <!-- Only required for left/right tabs -->
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#activity_add" data-toggle="tab"><i class="icon icon-plus"></i> {% trans "Add Resource" %}</a></li>
+        {### <li><a href="#activity_sort" data-toggle="tab"><i class="icon-list-alt"></i> {% trans "Sort Order" %}</a></li> ###}
+      </ul>
+      <div class="tab-content">
+          {# ADD RESOURCE #}
+        <div class="tab-pane active" id="activity_add">
+            <form method="post" action="{% url activity_details_request_resource activity.id %}">
+                {% csrf_token %}
+                <small>{% trans "Type the URLs here, one per line" %}</small>
+                <textarea name="resources_to_process" class="input-block-level input-medium"></textarea>
+                
+                <input type="submit" class="btn btn-success" value="Request this Resources"/>
+            </form>
+        </div>
+        
+        <div class="tab-pane" id="activity_sort">
+            <div id="activity_sort">
+                {% for activity in activity.items.all %}
+                	<div id="activity_{{activity.id}}">
+                        <p><span class="label label-info">{{activity.order}}</span> {{activity.item.title}}<hr/></p>
+                    </div>
+        
+                {% endfor %}
+        
+            </div>
+          
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    
+</div>
+{% endblock %}

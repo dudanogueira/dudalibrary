@@ -1,0 +1,21 @@
+{% extends 'index.html' %}
+{% load i18n %}
+{% url search as url_search %}
+{% load highlight %}
+
+{% block content %}
+{% if related_tags %}
+<div id="related-tags">
+	
+	<h3>{% blocktrans %}Tags Related to Tag "{{tag}}"{% endblocktrans %}</h3>
+	{% for tag in related_tags %}
+		<a href="{% url tag_details tag.id %}">{{tag.name}} ({{tag.count}})</a>{% if not forloop.last %},{%endif %}
+	{% endfor %}
+</div>
+{% endif %}
+
+{% include "resources_object_list.html" %}
+
+{% include "paginator.html" %}
+
+{% endblock %}

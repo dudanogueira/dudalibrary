@@ -1,0 +1,26 @@
+{% load i18n %}
+{#### SIDEBAR ####}
+{% if resource %}
+{% include "resource_sidebar.html" %}
+{% endif %}
+{% if searchform %}
+<div id="searchbox" style="text-align:center; margin-bottom: 20px">
+    <h4>{% trans "Search" %}</h4>
+    <form method="get" action="{% url index %}" id="search_box" class="input-append">
+		{{ searchform.as_table }}
+		<button type="submit" class="btn">{% trans "Go" %}</button>
+    </form>
+</div>
+{% endif %}
+{% if curricular_grades %}
+<div id="curricular-grades">
+	<h2>{% trans "Curricular Grades" %}</h2>
+	<ul>
+	{% for curricular in curricular_grades %}
+		<li><a href="{% url curricular_grade curricular.id %}">{{curricular}}</a></li>
+	{% endfor %}
+	</ul>
+</div>
+{% endif %}
+
+{% include "languages.html" %}

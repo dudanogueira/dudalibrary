@@ -1,0 +1,7 @@
+{% load i18n %}
+<ul>
+	{% for resource in object_list %}
+		{% url resource_details resource.id  as url_resource %}
+		<li><a href="{{url_resource}}">{{ resource }}</a></li>
+	{% endfor %}
+</ul>

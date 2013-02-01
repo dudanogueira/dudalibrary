@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load highlight %}
+{% block content %}
+{% load ratings_tags %}
+{% load tagging_tags %}
+{% load hitcount_tags %}
+{% get_hit_count for resource as pageviews %}
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        {% get_hit_count_javascript for resource %}
+    });
+</script>
+<div id="show-resource">
+	<div div="resource-title">
+		<h1>
+			{{ resource.title}}
+		</h1>
+        <span class="label label-success">{{resource.resource_reference_string}}</span>
+        <hr />
+		<div id="buttons">
+			{% trans "Pageviews" %}: {{pageviews}} | {% trans "Category" %}: {{resource.category.all|join:","}}
+		</div>
+	</div>
+	<div id="resource-images">
+		{% include "resource_rating.html" %}
+		<h2>{% trans "Source" %}</h2>
+			{{resource.source}} <br />
+			[<a href="{% url index%}?q=&source={{resource.source.id}}&language=">{% trans "Show more resources from this source" %}</a>]
+		<div id="thumbnails">
+			{% if resource.duration %}
+			<h2>{% trans "Duration" %}</h2>
+			<div class="thumb-extra">
+				<span class="resource-duration">{{resource.humanized_duration}}</span>
+			</div>
+			{% endif %}
+			
+			<h2>{% trans "Thumbnails" %}</h2>
+			<ul>
+					{% for thumb in resource.thumbnails_path %}
+						<li><a href="{{resource.content_url}}"><img src="{{thumb}}"></a></li>
+					{%endfor%}
+			</ul>
+		</div>
+	</div>
+	<div id="resource-infos">
+		{% tags_for_object resource as tag_list  %}
+		{% if tag_list %}
+		<div id="tags">
+		<h2>{% trans "Related Tags" %}</h2>
+			{% for tag in tag_list %}
+				<a href="{% url tag_details tag.id %}">{{tag.name}}</a>{% if not forloop.last %},{%endif %}
+			{% endfor %}
+		</div>
+		{% endif %}
+		{% if resource.description %}
+		<div id="description">
+			<h2>{% trans "Description" %}</h2>
+			{{resource.description|highlight_only:query}}
+		</div>
+		{% endif %}
+		{% if resource.structure %}
+		<div id="structure">
+			<h2>{% trans "Structure" %}</h2>
+			{{resource.structure|linebreaks}}
+		</div>
+		{% endif %}
+		
+		{% if resource.objective %}
+		<div id="objective">
+			<h2>{% trans "Objective" %}</h2>
+			{{resource.objective|linebreaks}}
+		</div>
+		{% endif %}
+		{% if resource.author %}		
+		<div id="author">
+			<h2>{% trans "Author" %}</h2>
+			{{resource.author|safe|linebreaks}}
+		</div>
+		{% endif %}
+		
+		{% if resource.notes %}
+		<div id="notes">
+			<h2>{% trans "Notes" %}</h2>
+			<p>{{resource.notes}}</p>
+		</div>
+		{% endif %}
+        
+		<div id="identification">
+			<h2>{% trans "Identification" %}</h2>
+			<p>{{resource.resource_reference_string}}</p>
+		</div>
+        
+
+		{% if resource.source %}
+		<div id="source">
+			<h2>{% trans "Source" %}</h2>
+			<p><a href="{{resource.source.url}}">{{resource.source}}</a></p>
+			<small><a href="{% url index%}?q=&source={{resource.source.id}}&language=">{% trans "Show more resources from this source" %}</a></small>
+		</div>
+		{% endif %}
+
+		<div id="license">
+			<h2>{% trans "License" %}</h2>
+			{% if resource.license %}
+				<p>{{resource.license}}
+			{% else %}
+				<p>{% trans "Undeclared License" %}
+			{% endif %}
+			| <a href="{{resource.resource_url}}">{%trans "Source" %}</a> | <a href="http://{{resource.source.url}}">{{resource.source.name}}</a></p>
+		</div>
+
+		{% if resource.date %}
+		<div id="date">
+			<h3>{% trans "Date" %}</h3>
+			<p>{{ resource.date|date:"j/m/Y" }}</p>
+		</div>
+		{% endif %}
+
+		{% if resource.size %}
+		<div id="size">
+			<h3>{% trans "Size" %}</h3>
+			<p>{{resource.size_humanized}}</p>
+		</div>
+		{% endif %}
+		
+		{% if resource.language %}
+		<div id="language">
+			<h3>{% trans "Language" %}</h3>
+			<p>{{resource.language}}</p>
+		</div>
+		{% endif %}
+	</div>
+	{% if related_resources %}
+		<div id="related-resources">
+			<h2>{% trans "Related Resources" %}</h2>
+			<ul>
+			{% for item in related_resources %}
+			<hr class="horizontal-rule">
+	       	<li><a href="{% url resource_details item.id %}">{{forloop.counter}} - {{item.title}}</a></li>
+			{% if forloop.last %}
+				<hr class="horizontal-rule">
+			{% endif %}
+			{% endfor %}
+			</ul>
+		</div>
+	{% endif %}	
+</div>
+
+{% endblock %}

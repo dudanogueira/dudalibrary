@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% url search as url_search %}
+{% load highlight %}
+
+{% block content %}
+
+{% if query or blankquery %}
+	{% include "resources_object_list.html" %}
+	{% include "paginator.html" %}
+{% else %}
+	{% include "browse.html" %}
+{% endif %}
+
+{% endblock %}

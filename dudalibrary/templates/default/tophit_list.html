@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% url search as url_search %}
+{% load highlight %}
+
+{% block content %}
+	<h1>{% trans "Top Viewed" %}</h1>
+	<h2>{% blocktrans with page_obj.number as page %}Page {{page}} {% endblocktrans %}</h2>
+	<div id="browse">
+		<div id="toplists">	
+		{% include "tophit_list_items.html" %}
+		{% include "paginator.html" %}
+		</div>
+		
+		<div id="featuredlist">
+			<h2>Featured Resource</h2>
+			{% include "featured_list.html" with object_list=featured_list %}
+		</div>
+	</div>
+{% endblock %}

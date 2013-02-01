@@ -1,0 +1,26 @@
+{% load i18n %}
+{% for resource in object_list %}		
+<div id="featured_resource">
+<h2>{{resource}}</h2>
+
+<div class="row show-grid">
+              <div class="span3" data-original-title="">
+                  
+                  {% for thumb in resource.thumbnails_path %}
+                  		{% if forloop.first %}
+                  			<a href="{% url resource_details resource.id %}" title="{{resource.title}}"><img src="{{thumb}}" alt="{{resource.title}}" title="{{resource.title}}" width="150" height="144"/></a>
+                  		{% endif %}
+                  	{% endfor %}
+                    
+              </div>
+              
+              <div class="span6" data-original-title="">
+                  <p>{{resource.description}}<br />
+                  <a class="btn btn-warning btn-large" href="{% url resource_details resource.id %}"><i class="icon-plus"></i> {% trans "More" %}</a></p>
+                      
+              </div>
+            </div>
+
+</div>
+
+{% endfor %}

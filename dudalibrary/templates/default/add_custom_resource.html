@@ -1,0 +1,31 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+{% block title %}Content Manager - {% trans "Downloader" %}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs"><a href="{% url admin:index %}">{% trans "Back"%}...</a></div>
+{% endblock %}
+
+{% block content %}
+	<h2>{% trans "Add a Custom Content" %}</h2>
+	<p>{% trans "Currently supported" %}: <a href="http://www.wikipedia.org">Wikipedia</a>, <a href="http://www.youtube.com">Youtube</a>, <a href="http://www.vimeo.com">Vimeo</a>
+	{% if urls %}
+		<p>analyzing...</p>
+		{% for cr in report %}
+			<h2>{{cr.resource.title}}</h2>
+			<ul>{{forloop.counter}}
+				<li>Created: {{cr.created}}</li>
+				<li>Status: {{cr.resource.status}}</li>
+				<li>Title: {{cr.resource.title}}</li>
+				<li>Error: {{cr.error}}</li>
+				<li><a href="{{cr.resource.get_absolute_url}}">View Resource</a></li>
+			</ul>
+		{% endfor %}
+	{% else %}
+		<form action="{% url add_custom_resource_url %}" method="get" accept-charset="utf-8">
+				<p><textarea name="urls" rows="8" cols="80">{{urls}}</textarea></p>
+				<p><label for="url">Urls. One per line.</label></p>
+			<p><input type="submit" value="Continue &rarr;"></p>
+		</form>
+	{% endif %}
+{% endblock %}

@@ -1,0 +1,73 @@
+{% load i18n %}
+{% load highlight %}
+
+<div id="browse">
+	<h1>{% trans "Browse into knowledge" %}</h1>
+        
+{% if featured_list %}
+    <div class="hero-unit">
+	{% include "featured_list.html" with object_list=featured_list %}
+    </div>
+{% endif %}
+    
+    <div class="row-fluid">
+    {% if latest_additions %}
+      <div class="span4">
+  		<div id="latest_additions">
+  			<h2>{% trans "Latest Additions" %}</h2>
+  			{% include "latest_additions_list_items.html" with object_list=latest_additions %}
+  			<p>
+                <p><a class="btn" href="{% url top_viewed %}">{% trans "see the entire list  &raquo;" %}</a></p>
+            </p>
+  		</div>	
+      </div><!--/span-->
+      {% endif %}
+        
+    {% if hit_list %}
+      <div class="span4">
+  		<div id="topviews">
+  			<h2>{% trans "Top Viewed" %}</h2>
+  			{% include "tophit_list_items.html" with object_list=hit_list %}
+  			<p>
+                <p><a class="btn" href="{% url top_viewed %}">{% trans "see the entire list  &raquo;" %}</a></p>
+            </p>
+  		</div>	
+      </div><!--/span-->
+      {% endif %}
+      
+      
+      {% if top_qs_list %}
+      <div class="span4">
+		<div id="toprated">
+			<h2>{% trans "Top Rated" %}</h2>
+			{% if top_qs %}
+				{% include "topvoted_list_items.html" with object_list=top_qs_list %}
+			{% endif %}
+			<p><a class="btn"  href="{% url top_voted %}">{% trans "see the entire list  &raquo;" %}</a></p>
+		</div>          
+      </div><!--/span-->
+      {% endif %}
+      
+      
+    </div><!--/row-->
+
+
+    
+	{% if tags_to_cloud %}
+	<div id="tagcloud">
+	{% regroup tags_to_cloud|dictsortreversed:"count" by count as tag_list %}
+		<h2>{% trans "Tag Cloud" %}</h2>
+		<p>
+		{% for count in tag_list %}
+			{%for tag in count.list %}
+				<font size="{{ tag.font_size }}">
+					{% ifequal tag.id actual_tag.id %}<b>{% endifequal %}
+					<a href="{% url tag_details tag.id %}?q={{q}}">{{tag.name}} {# ({{count.grouper}})#}</a>
+					{% ifequal tag.id actual_tag.id %}</b>{% endifequal %}
+				</font>
+			{% endfor %}
+		{%endfor%}
+		</p>
+	</div>
+	{% endif %}	
+</div>

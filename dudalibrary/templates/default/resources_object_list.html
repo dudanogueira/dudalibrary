@@ -1,0 +1,63 @@
+{% load i18n %}
+{% load highlight %}
+<div id="resources-list">
+	{% if tag %}
+		<h2>{% blocktrans count total_found=paginator.count %}Showing {{total_found}} resource related to tag "{{tag}}"{% plural %}Showing {{total_found}} resources related to tag "{{tag}}"{% endblocktrans %}</h2>
+	{% else %}
+		{% if object_list %}
+			{% if query %}<h1>{% blocktrans %}Searching for: "{{query}}"{% endblocktrans %}</h1>{% endif %}
+			<h2>{% blocktrans with in_page_total_count=object_list|length total_count=paginator.count %}{{in_page_total_count}} results on this page out of {{total_count}} available resources.{% endblocktrans %}</h2>
+		{% else%}
+			<h2>{% trans "Ooops. No resources to show!" %}</h2>
+		{% endif %}
+	{% endif %}
+
+{% for resource in object_list %}
+<div id="{{resource.app_label}}-item-{{resource.id}}" class="resource-item-list {% cycle 'even' 'odd' %}">
+    
+    
+    <div class="row-fluid">
+        
+ 
+        
+      <div class="span2">
+      	<div class="resource_list_thumb" id="thumbnail-{{resource.id}}">
+	
+      	{% for thumb in resource.thumbnails_path %}
+      		{% if forloop.first %}
+            <a href="{{ resource.get_absolute_url }}?{{request.META.QUERY_STRING}}">
+      			<img src="{{thumb}}" class="imagedropshadow" />
+      		</a>
+      		{% if "video" in resource.category_code_set%}
+      		<div class="">
+      			<span class="label">{{resource.humanized_duration}}</span>
+      		</div>
+      		{% endif %}
+      		{% endif %}
+      	{% endfor %}
+      	</div>
+      </div><!--span -->
+      
+      <div class="span10">
+      	<div id="information-{{resource.id}}" class="information">
+      		<p class="title"><a href="{{resource.get_absolute_url}}?{{request.META.QUERY_STRING}}" >{{resource.title}}</a></p>
+      		<p class="description"><span class="label label-info">{% trans "Description" %}</span> <span
+      			 class="text">{% if query %}
+      			{% highlight_truncate resource.description with query %}
+      			{% else %}
+      				{{resource.description}}
+      			{% endif %}
+      			</span></p>
+      		<p class="categories"><span class="label label-info">{%trans "Categories" %}</span> {{resource.category.all|join:","}}</p>
+
+      	</div>
+      </div>
+    </div>
+    
+</div>
+<hr class="horizontal-rule">
+{% empty %}
+	<p>{% trans "No resources found" %}. <a href="{% url get_random_resource_url %}">{% trans "Try random resource!" %}</a></p>
+{% endfor %}
+	
+</div>

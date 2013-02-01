@@ -1,0 +1,12 @@
+{% load i18n %}
+<ul>
+{% for resource in object_list %}
+	{% if resource.average %}
+		<li><a href="{% url resource_details resource.id %}"><span class="resource-score">{{resource.average}}</span> {{resource.title}}, <i>
+
+{% blocktrans count num_votes=resource.num_votes %}with {{num_votes}} vote{% plural %}with {{num_votes}} votes{% endblocktrans %}
+			</i>
+			</a></li>
+	{% endif %}
+{% endfor %}
+</ul>

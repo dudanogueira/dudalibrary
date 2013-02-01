@@ -1,0 +1,26 @@
+{% load i18n %}
+{% load ratings_tags %}
+{% get_rating_score for resource as score %}
+{% get_rating_form for resource as rating_form %}
+{% get_rating_vote for resource as vote %}
+
+<div id="resource-rating">
+	{% if score %}
+		<h2>{% trans "Resource Score" %}:</h2>
+        <p class="resource-score">{{ score.average }}</p>
+		<span class="resource-votes">{% trans "Votes" %}: {{ score.num_votes }}</span>
+    {% else %}
+        <p class="label label-success">{% trans "Be the first to classify this resource!" %}</p>
+    {% endif %}
+	{% if vote %}
+	<h2>{% trans "Your Vote" %}: {{vote.score}}</h2>
+	{% else %}
+	<h2>{% trans "Classify this resource!" %}</h2>
+	{% endif %}
+    <form action="{% url ratings_vote %}" method="post" class="ratings">
+        {% csrf_token %}
+		{{rating_form}}
+		<span class="success" style="display: none;">{% trans "Vote registered!"%}</span>
+        <span class="error" style="display: none;">{% trans "erro" %}</span>
+    </form>
+</div>

@@ -1,0 +1,24 @@
+{% load i18n %}
+
+<script type='text/javascript'>
+$(document).ready(function(){
+	$(".button").hover(function() {
+			var txt = $(this).attr('alt')
+			$('#button-desc').text(txt)
+			$(this).addClass("over");
+		}, function() {
+			$(this).removeClass("over");
+			$('#button-desc').text('')
+	});
+});
+</script>
+<div id="resource-action-buttons">
+	<ul>
+		<li><a href="{{resource.content_url}}"><img alt="{% trans "Play this Resource" %}" src="{{MEDIA_URL}}img/icons/play.png" class="button"/></a></li>
+		<li><a href="{{resource.content_url_path}}"><img src="{{MEDIA_URL}}img/icons/folder.png" class="button" alt="{% trans "See Resource Folder" %}"/></a></li>
+		{# <li><a href="javascript:onClick=alert('Not Implemented');"><img src="{{MEDIA_URL}}img/icons/download.png" class="button" alt="{% trans "Download Resource Pack" %}"/></a></li> #}
+	</ul>
+	<span id="button-desc"></span>
+</div>
+
+{## <p class="backtosearch"><a href="{% url index %}?{{request.META.QUERY_STRING}}#{{resource.app_label}}-item-{{resource.id}}">{% trans "back" %}</a></p> ##}

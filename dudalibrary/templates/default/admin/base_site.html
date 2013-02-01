@@ -1,0 +1,29 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }} | {% trans "Duda Library" %}{% endblock %}
+
+{% block extrastyle %}
+<style>
+#header{ background-color: #333940; border-bottom: solid 3px #999; }
+ 
+#branding h1{ color: #fff; }
+.module h2, .module caption, .inline-group h2 { background:#ccc url(/media/img/admin/nav-bg.gif) bottom left repeat-x; color: #333940; }
+a.section:link, a.section:visited { color: #666666; }
+
+#custom-menu{
+	padding: 0 10px;
+}
+
+</style>
+
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">LOGO {% trans "Duda Library" %}</h1>
+<div id="custom-menu">
+	<p><a href="{% url add_custom_resource_url %}">{% trans "Add Custom Content" %}</a> | <a href="">{% trans "System Status" %}</a></p>
+</div>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
