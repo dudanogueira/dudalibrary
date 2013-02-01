@@ -6,7 +6,6 @@
 	<div id="show-activity">
 		<h1>{{curricular_grade}}</h1>
         
-        
         <ul class="nav nav-tabs" id="myTab">
             {% for class in curricular_grade.subjectclass_set.all %}
             <li class="{% if forloop.first %}active{%endif%}"><a href="#class-{{class.id}}" data-toggle="tab">{{class}}</a></li>
@@ -14,29 +13,37 @@
             {% if request.user.is_staff %}
             <li><a href="#add-class" data-toggle="tab">{% trans "Add Class" %}</a>
             {% endif %}
-            
         </ul>
  
         <div class="tab-content">
             {% for class in curricular_grade.subjectclass_set.all %}
             <div class="tab-pane {% if forloop.first %}active{%endif%}" id="class-{{class.id}}">
+                <p>{{class.description}}</p>
       			{% for subject in class.subject_set.all %}
+                {% if subject.activity_set.all %}
       				<h4><strong>{{subject}}</strong></h4>
       				<ul>
       				{% for activity in subject.activity_set.all %}
-      					<li><a href="{% url activity_details activity.id %}">{{activity}} - {{activity.description}}</a></li>
+      					<li><a href="{% url activity_details activity.id %}">{{activity}}{% if activity.description %} - {{activity.description}}{%endif%}</a></li>
       				{% endfor %}
       				</ul>
+                {% endif %}
       			{% endfor %}
+                {% if request.user.is_staff %}
+                <hr />
+                    <a class="btn btn-success" href="{% url curricular_activity_select_add_subject curricular_grade.id class.id %}"><i class="icon-white icon-plus"></i> {% trans "Add Activities" %}</a>
+                {% endif %}
             </div>
             {% endfor %}
             <div class="tab-pane" id="add-class">
-                <h2>{% trans "Add a new Class" %}
+                <h2>{% trans "Add a new Class" %}</h2>
+                <form method="POST">
+                    {% csrf_token %}
+                    {{add_curricular_class_form}}
+                    <p><input type="submit" class="btn btn-success" value="{% trans 'Add' %}"></p>
+                </form>
             </div>
         </div>
-        
-        
-
  
         <script>
           $(function () {

@@ -198,7 +198,7 @@ p.resource-score{
     padding-left: 10px;
 }
 
-#browse #topviews ul, #related-resources ul, #latest_additions ul{
+#browse #topviews ul, #related-resources ul, #latest_additions ul, #browse #toprated ul{
     margin: 0;
     text-align: left;
 }

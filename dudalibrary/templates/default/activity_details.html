@@ -4,7 +4,7 @@
 
 <div id="show-activity">
 	<h1>{{activity}}</h1>
-	<h2>{{activity.subject}}</h2>
+	<h2>{{activity.subject}} - {{activity.subject.subject_class}}</h2>
 	<p>{{activity.description}}</p>
 	
 	{% for activity_unit in activity.activityitem_set.all %}
@@ -46,6 +46,8 @@
         {% endifequal %}
         
 		{% endifequal %}
+    {% empty %}
+    <p>{% trans "There are no resources to show" %}
 	{% endfor %}
 
     <script language="javascript">

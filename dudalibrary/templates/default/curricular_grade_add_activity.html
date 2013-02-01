@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div id="add-curricular-activity">    
+    <h1>{{curricular_grade}}</h1>
+    <h2>{{curricular_class}}</h2>
+    {% if subject_selected %}
+    <h3>{% trans "Subject" %}: {{subject_selected}}</h3>
+    <h4>{% trans "Add Activity" %}</h4>
+    <form method="post" action="?add_activity=True">
+    {% csrf_token %}
+    {{form_add_activity}}
+    <p><input type="submit" class="btn btn-success" value="{% trans "Add" %}"></p>
+    </form>
+    
+    {% else %}
+        {% if subjects %}
+            <h4>{% trans "Use an existing" %} {% trans "Subject Class" %}</h4>
+            <ul>
+            {% for subject in subjects %}
+            <li><a href="?subject_id={{subject.id}}">{{subject.title}}</a></li>
+            {% endfor %}
+            </ul>
+        {%endif %}
+        <h4>{% trans "Add a New" %} {% trans "Subject Class" %}</h4>
+        <form method="POST">
+            {% csrf_token %}
+            {{form_add_subject_class}}
+            <p><input type="submit" class="btn btn-success" value="{% trans "Add" %}"></p>
+        </form>
+        {% endif %}
+</div>
+
+{% endblock %}

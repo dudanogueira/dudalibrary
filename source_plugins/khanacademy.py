@@ -15,10 +15,12 @@ from youtube import Parser as YoutubeParser
 class Parser(YoutubeParser):
     '''
     Duda Library Plugin to parse and index Open Educational Resources (OERs)
-    stored at Youtube under KhanAcademyPortugues user.
+    stored at Youtube under KhanAcademy user.
     '''
     def __init__(self):
         YoutubeParser.__init__(self)
+        # initials
+        self.parsed = False
         # metas
         self.PLUGIN_NAME = u'Plugin Khan Academy'
         self.YOUTUBE_USERS = {
@@ -51,28 +53,5 @@ class Parser(YoutubeParser):
                 self.identified = True
             except:
                 self.identified = False
-    
-    def parse(self, url=None):
-        '''identify and parse the url into a registered Resource Object'''
-        if url:
-            self.url = url
-        
-        try:
-            return self
-        except:
-            raise
-            # error. Mark the resource with error
-            self.parsed = False
-            self.resource.status = 'error'
-            self.resource.save()
-    
-    def index(self):
-        '''Index the resource with the parsed infos'''
-        if self.parsed:
-            # check files, paths, thumbnails, etc
-            print "INDEX!"
-            self.resource.check_files()
-            self.resource.generate_thumb()
-
             
             

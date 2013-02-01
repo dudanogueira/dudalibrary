@@ -23,7 +23,7 @@ from ratings.forms.widgets import StarWidget
 from ratings.forms import StarVoteForm
 from ratings.handlers import ratings
 from hitcount.models import HitCount
-from curricular.models import CurricularGrade, Activity, ActivityItem
+from curricular.models import CurricularGrade, Activity, ActivityItem, SubjectClass, Subject
 
 from django.conf import settings
 
@@ -31,6 +31,26 @@ CONTENT_PER_PAGE = getattr(settings, 'CONTENT_PER_PAGE', 10)
 TAGGING_RELATED_RESOURCE_LIST_NUM = getattr(settings, 'TAGGING_RELATED_RESOURCE_LIST_NUM', 10)
 
 search_fields = ['description', 'title']
+
+class AddCurricularClassForm(forms.ModelForm):
+    class Meta:
+        model = SubjectClass
+        fields = ('title', 'description')
+
+class AddSubjectClassForm(forms.ModelForm):
+    class Meta:
+        model = SubjectClass
+        fields = ('title', 'description')
+
+class AddSubjectForm(forms.ModelForm):
+    class Meta:
+        model = Subject
+        fields = ('title', 'description')
+
+class AddActivityForm(forms.ModelForm):
+    class Meta:
+        model = Activity
+        fields = ('title', 'description')
 
 class SearchForm(forms.Form):
     q = forms.CharField(max_length=300, label="", required=False)
@@ -105,8 +125,6 @@ def activity_details_request_resource(request, object_id):
         data = raw_data.splitlines()
         for line in data:
             item = resource_identifier(line)
-            if item and item.no_internet:
-                messages.erro(request, u'<b>Warning!</b> No Internet Connection! ')
             # check if item is identified
             if item and item.identified:
                 # set order in activity
@@ -130,7 +148,7 @@ def activity_details_request_resource(request, object_id):
                         )
                         messages.success(request, u'O Recurso %s (ID: %s) Foi adicionado à atividade %s!' % (resource, item.identifier_id, activity))
                     elif resource.status == "rejected":
-                        messages.erro(request, u'<b>Error!</b> Rejected Resource!')
+                        messages.error(request, u'<b>Error!</b> Rejected Resource!')
                 except Resource.DoesNotExist:
                     # no resource found with this identifier,
                     # lets add to the queue                
@@ -297,7 +315,55 @@ def activity_details(request, object_id):
     return render_to_response('activity_details.html', locals(),
         context_instance=RequestContext(request),)
 
+def curricular_add_activity(request, curricular_id, class_id, subject_id):
+    curricular_grade = get_object_or_404(CurricularGrade, id=curricular_id)
+    curricular_class = get_object_or_404(SubjectClass, id=class_id)
+    curricular_subject = get_object_or_404(Subject, id=subject_id)
+
+    if request.POST:
+        form = AddActivityForm(request.POST)
+        if form.is_valid():
+            new_activity = form.save(commit=False)
+            new_activity.subject = curricular_subject
+            new_activity.save()
+            return redirect(reverse("activity_details", args=[new_activity.id]))
+        
+    else:
+        form = AddActivityForm()
+    return render_to_response('curricular_add_activity.html', locals(),
+        context_instance=RequestContext(request),)
+
+def curricular_activity_select_add_subject(request, curricular_id, class_id):
+    curricular_grade = get_object_or_404(CurricularGrade, id=curricular_id)
+    curricular_class = get_object_or_404(SubjectClass, id=class_id)
+    subjects = Subject.objects.filter(subject_class=curricular_class)
+    form = AddSubjectClassForm()
+    if request.POST:
+        form = AddSubjectForm(request.POST)
+        if form.is_valid():
+            new_subject = form.save(commit=False)
+            new_subject.curricular_grade = curricular_grade
+            new_subject.subject_class = curricular_class
+            new_subject.save()
+            return redirect(reverse('curricular_add_activity', args=[curricular_grade.id, curricular_class.id, new_subject.id]))
+
+    return render_to_response('curricular_activity_select_add_subject.html', locals(),
+        context_instance=RequestContext(request),)
+    
+
 def get_curricular_grade(request, object_id):
     curricular_grade = get_object_or_404(CurricularGrade, id=object_id)
+    add_curricular_class_form = AddCurricularClassForm()
+    if request.POST:
+        form_class = AddCurricularClassForm(request.POST)
+        if form_class.is_valid():
+            new_curricular_class = form_class.save(commit=False)
+            new_curricular_class.curricular_grade = curricular_grade
+            new_curricular_class.user = request.user
+            new_curricular_class.save()
+            messages.success(request, _(u'<b>Success!</b> Curricular Class %s Added' % new_curricular_class.title))
+        else:
+            messages.error(request, _(u'<b>Error!</b> Curricular Class NOT Added'))
+            
     return render_to_response('curricular_grade_details.html', locals(),
         context_instance=RequestContext(request),)

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div id="add-curricular-activity">    
+    <h1>{{curricular_grade}}</h1>
+    <h2>{{curricular_class}}</h2>
+    {% if subjects %}
+        <h4>{% trans "Use an existing" %} {% trans "Subject Class" %}</h4>
+        <ul>
+        {% for subject in subjects %}
+        <li><a href="{% url curricular_add_activity curricular_grade.id curricular_class.id subject.id %}">{{subject.title}}</a></li>
+        {% endfor %}
+        </ul>
+    {%endif %}
+    
+    <h4>{% trans "Add a New" %} {% trans "Subject Class" %}</h4>
+    <form method="POST">
+        {% csrf_token %}
+        {{form}}
+        <p><input type="submit" class="btn btn-success" value="{% trans "Add" %}"></p>
+    </form>
+</div>
+
+{% endblock %}

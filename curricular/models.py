@@ -7,6 +7,9 @@ from django.contrib.contenttypes import generic
 from django.contrib.admin.models import User
 import tagging
 from tagging.fields import TagField
+from django.utils.translation import ugettext_lazy as _
+
+
 
 class CurricularGrade(models.Model):
 
@@ -15,7 +18,7 @@ class CurricularGrade(models.Model):
     
     title = models.CharField(blank=True, null=True, max_length=100)
     description = models.TextField(blank=True)
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, blank=True, null=True)
     # metadata information
     created = models.DateTimeField(blank=True, default=datetime.datetime.now, auto_now_add=True)
     updated = models.DateTimeField(blank=True, default=datetime.datetime.now, auto_now=True)
@@ -25,8 +28,8 @@ class SubjectClass(models.Model):
     def __unicode__(self):
         return u'%s' % self.title
     curricular_grade = models.ForeignKey(CurricularGrade)
-    title = models.CharField(blank=True, null=True, max_length=100)
-    description = models.TextField(blank=True)
+    title = models.CharField(_("Title"), blank=True, null=True, max_length=100)
+    description = models.TextField(_("Description"), blank=True)
     # metadata information
     created = models.DateTimeField(blank=True, default=datetime.datetime.now, auto_now_add=True)
     updated = models.DateTimeField(blank=True, default=datetime.datetime.now, auto_now=True)
@@ -34,7 +37,11 @@ class SubjectClass(models.Model):
 class Subject(models.Model):
     
     def __unicode__(self):
-        return u'%s (%s)' % (self.title, self.subject_class.title)
+        #return u'%s (%s)' % (self.title, self.subject_class.title)
+        return u'%s' % self.title
+    
+    class Meta:
+        ordering = ['title']
 
     title = models.CharField(blank=True, max_length=100)
     subject_class = models.ForeignKey(SubjectClass)
@@ -71,7 +78,7 @@ class Activity(models.Model):
         return u'%s' % self.title
     
     subject = models.ForeignKey(Subject)
-    title = models.CharField(blank=True, max_length=100)
+    title = models.CharField(blank=False, max_length=100)
     description = models.TextField(blank=True)
     tags = TagField(max_length=2000)
     # metadata information
