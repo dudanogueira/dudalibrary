@@ -67,7 +67,7 @@ class Resource(models.Model):
     resource_size = models.CharField(blank=True, max_length=100)
     resource_pageviews = models.IntegerField(blank=True, null=True)
     resource_language = models.CharField(blank=True, max_length=300, null=True)
-    tags = TagField(max_length=2000)
+    tags = TagField(max_length=400)
     # foreign information
     source = models.ForeignKey(Source, blank=False, null=False)
     language = models.ForeignKey(Language, blank=True, null=True)
