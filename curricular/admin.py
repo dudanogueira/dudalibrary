@@ -3,7 +3,8 @@ from django.contrib import admin
 from curricular.models import *
 
 class CurricularGradeAdmin(admin.ModelAdmin):
-    pass
+    list_display = "title", 'parent'
+    list_filter = 'parent', 'user'
 
 class ActivityAdmin(admin.ModelAdmin):
     list_display = 'title', 'subject',

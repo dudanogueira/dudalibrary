@@ -1,7 +1,12 @@
 {% load i18n %}
 <ul>
 	{% for resource in object_list %}
+        {% if resource.enabled %}
+        <h2>{% trans "Top Viewed" %}</h2>        
 		{% url resource_details resource.content_object.id  as url_resource %}
 		<li><a href="{{url_resource}}"><span class="item_attribute">{{resource.hits}}</span>{{ resource }}</a></li>
+        <p><a class="btn" href="{% url top_viewed %}">{% trans "see the entire list  &raquo;" %}</a></p>
+        
+        {% endif %}
 	{% endfor %}
 </ul>

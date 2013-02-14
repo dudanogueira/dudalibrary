@@ -14,6 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from resources.models import Resource, CustomResource
 from queue.models import ResourceQueue
+from queue.tasks import add_resource_to_queue
 from django import forms
 import django_filters
 from dudalibrary.utils import get_query, resource_identifier
@@ -161,6 +162,9 @@ def activity_details_request_resource(request, object_id):
                         full_url=item.full_url,
                     )
                     if created:
+                        # create celery queue too
+                        if getattr(settings, 'USE_CELERY', False):
+                            add_resource_to_queue.delay(queue.id)
                         contenttype = ContentType.objects.get_for_model(queue)
                         # add activity item first
                         activity_item = ActivityItem.objects.create(
@@ -222,7 +226,7 @@ def index(request):
     else:
         # browse mode
         # featured list
-        curricular_grades = CurricularGrade.objects.all()
+        curricular_grades = CurricularGrade.objects.filter(parent=None)
         featured_list = qs.filter(
                 #category__code='video', thumbnails__gt=0
             ).order_by("?").all()[0:1]
@@ -231,9 +235,7 @@ def index(request):
         qsfiltered = ResourcetFilter(request.GET, queryset=qs)
         filter_form = qsfiltered.form
         # top pageviews
-        resource_type = ContentType.objects.get(
-            app_label="resources", model="resource"
-        )
+        resource_type = ContentType.objects.get(app_label="resources", model="resource")
         hit_list = HitCount.objects.filter(content_type=resource_type)[0:7]
         # top rated
         handler = ratings.get_handler(qs.model)
@@ -311,7 +313,7 @@ def add_custom(request):
 
 def activity_details(request, object_id):
     activity = get_object_or_404(Activity, id=object_id)
-    curricular_grades = CurricularGrade.objects.all()
+    curricular_grades = CurricularGrade.objects.filter(parent=None)
     return render_to_response('activity_details.html', locals(),
         context_instance=RequestContext(request),)
 

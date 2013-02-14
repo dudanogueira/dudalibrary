@@ -14,8 +14,12 @@ from django.utils.translation import ugettext_lazy as _
 class CurricularGrade(models.Model):
 
     def __unicode__(self):
-        return u'%s' % self.title
-    
+        if not self.parent:
+            return u'%s' % self.title
+        else:
+            return u'%s - %s' % (self.parent, self.title)
+
+    parent = models.ForeignKey('self', blank=True, null=True, limit_choices_to = {'parent': None})
     title = models.CharField(blank=True, null=True, max_length=100)
     description = models.TextField(blank=True)
     user = models.ForeignKey(User, blank=True, null=True)

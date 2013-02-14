@@ -6,6 +6,8 @@
 	<div id="show-activity">
 		<h1>{{curricular_grade}}</h1>
         
+        {% if curricular_grade.parent %}
+        
         <ul class="nav nav-tabs" id="myTab">
             {% for class in curricular_grade.subjectclass_set.all %}
             <li class="{% if forloop.first %}active{%endif%}"><a href="#class-{{class.id}}" data-toggle="tab">{{class}}</a></li>
@@ -53,7 +55,16 @@
             e.preventDefault();
             $(this).tab('show');
           })
-        </script>        
+        </script>
+
+        {% else %}
+        <ul>
+        {% for curricular_child in curricular_grade.curriculargrade_set.all %}
+            <li><a href="{% url curricular_grade curricular_child.id %}">{{curricular_child}}</a></li>
+        {% endfor %}
+        </ul>
+        
+        {% endif %}
 
 	</div>
 </div>

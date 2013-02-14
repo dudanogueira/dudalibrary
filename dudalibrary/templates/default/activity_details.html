@@ -3,8 +3,9 @@
 {% block content %}
 
 <div id="show-activity">
+    <h2>{{activity.subject.subject_class.curricular_grade}}</h2>
 	<h1>{{activity}}</h1>
-	<h2>{{activity.subject}} - {{activity.subject.subject_class}}</h2>
+	<h3>{{activity.subject}} - {{activity.subject.subject_class}}</h3>
 	<p>{{activity.description}}</p>
 	
 	{% for activity_unit in activity.activityitem_set.all %}

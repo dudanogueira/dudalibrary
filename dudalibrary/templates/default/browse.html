@@ -26,11 +26,8 @@
     {% if hit_list %}
       <div class="span4">
   		<div id="topviews">
-  			<h2>{% trans "Top Viewed" %}</h2>
+  			
   			{% include "tophit_list_items.html" with object_list=hit_list %}
-  			<p>
-                <p><a class="btn" href="{% url top_viewed %}">{% trans "see the entire list  &raquo;" %}</a></p>
-            </p>
   		</div>	
       </div><!--/span-->
       {% endif %}
