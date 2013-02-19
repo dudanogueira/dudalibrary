@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
+{% load i18n %}
+{% load highlight %}
 
 {% block content %}
-    <h2>Search</h2>
+    <h2>{% trans "Search" %}</h2>
 
     <form method="get" action=".">
         <table>
@@ -13,27 +15,65 @@
                 </td>
             </tr>
         </table>
+    </form>
+    {% if query %}
+        <h3>{% trans "Results" %}</h3>
 
-        {% if query %}
-            <h3>Results</h3>
+            {% for resource in page.object_list %}
+            <div class="row-fluid">
+        
+                <div class="span2">
+                    <div class="resource_list_thumb" id="thumbnail-{{resource.object.id}}">            
+                        <div class="resource_list_thumb" id="thumbnail-{{resource.object.id}}">
+	
+                            {% for thumb in resource.object.thumbnails_path %}
+                            {% if forloop.first %}
+                            <a href="{{ resource.object.get_absolute_url }}?q={{query}}">
+                                <img src="{{thumb}}" class="imagedropshadow" />
+                            </a>
+                            {% if "video" in resource.object.category_code_set%}
+                            <div class="">
+                                <span class="label">{{resource.object.humanized_duration}}</span>
+                            </div>
+                            {% endif %}
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="span10">
+                  	<div id="information-{{resource.object.id}}" class="information">
+                  		<p class="title"><a href="{{resource.object.get_absolute_url}}?q={{query}}" >{{resource.title}}</a></p>
+                  		<p class="description"><span class="label label-info">{% trans "Description" %}</span> <span
+                  			 class="text">
+                             {% highlight_truncate resource.object.description with query as desc %}
+                            {% if query %}
+                            {{desc}}
+                  			{% else %}
+                  				{{resource.object.description}}
+                  			{% endif %}
+                  			</span></p>
+                  		<p class="categories"><span class="label label-info">{%trans "Categories" %}</span> {{resource.object.category.all|join:","}}</p>
 
-            {% for result in page.object_list %}
-                <p>
-                    <a href="{{ result.object.get_absolute_url }}">{{ result.object.title }}</a>
-                </p>
+                  	</div>
+                </div>
+            
+            </div>
+
+                
             {% empty %}
-                <p>No results found.</p>
+                <p>{% trans "No results found." %}</p>
             {% endfor %}
 
             {% if page.has_previous or page.has_next %}
                 <div>
-                    {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Previous{% if page.has_previous %}</a>{% endif %}
+                    {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; {% trans "Previous" %}{% if page.has_previous %}</a>{% endif %}
                     |
-                    {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Next &raquo;{% if page.has_next %}</a>{% endif %}
+                    {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}{% trans "Next" %} &raquo;{% if page.has_next %}</a>{% endif %}
                 </div>
             {% endif %}
         {% else %}
             {# Show some example queries to run, maybe query syntax, something else? #}
         {% endif %}
-    </form>
+
 {% endblock %}

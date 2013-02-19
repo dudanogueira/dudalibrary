@@ -10,7 +10,9 @@ INSTANCE = lambda *x:os.path.join(os.path.dirname(__file__), *x)
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-USE_CELERY = False
+
+
+USE_CELERY = True
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -51,6 +53,13 @@ CONTENT_PER_PAGE = 10
 # SOURCE PLUGINS AVAILABLE
 # list item
 SOURCE_PLUGINS =  ('portaldoprofessor', 'khanacademy', 'youtube')
+
+###PLUGINS OPTIONS
+## YOUTUBE
+# youtube_downloader or youtube-dl
+YOUTUBE_DOWNLOAD_METHOD = 'youtube-dl'
+## OTHERS
+
 
 # DONT TRANSLATE IT HERE, USE django i18n tools.
 CONTENT_LANGUAGES = {

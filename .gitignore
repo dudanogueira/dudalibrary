@@ -4,3 +4,4 @@
 local_settings.py
 dudalibrary/settings.py
 *.db
+dudalibrary/dudalibrary_search_index/

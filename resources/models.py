@@ -32,11 +32,13 @@ class Resource(models.Model):
     
     class Meta:
         ordering = ['-featured','-pageviews', '-resource_pageviews', '-thumbnails']
-        unique_together = (("resource_reference_string", "source"),)
+        #unique_together = (("resource_reference_string", "source"),)
     
     def __unicode__(self):
         return '%s' % self.title
     
+    # resource identifier
+    resource_reference_string = models.CharField(blank=True, max_length=500)
     # global resource identificator
     globalid = models.IntegerField(blank=True, null=True)
     custom_resource = models.BooleanField(default=False)
@@ -63,7 +65,6 @@ class Resource(models.Model):
     resource_url = models.URLField(blank=True, max_length=400, verify_exists=False, help_text="Resource url origin")
     resource_download_url = models.URLField(blank=True, max_length=800, verify_exists=False)
     resource_downloaded_file = models.CharField(blank=True, max_length=800)
-    resource_reference_string = models.CharField(blank=True, max_length=500)
     resource_size = models.CharField(blank=True, max_length=100)
     resource_pageviews = models.IntegerField(blank=True, null=True)
     resource_language = models.CharField(blank=True, max_length=300, null=True)
@@ -113,20 +114,20 @@ class Resource(models.Model):
             'object_id': str(self.id),
             }
         )
-        
+
     def content_url(self):
-        return u"%s/%s/grid-%s/%s" % (settings.CONTENT_URL, str(self.source.slug.lower()), self.pk, self.trigger)
+        return u"%s/%s/grid-%s/%s" % (settings.CONTENT_URL, str(self.source.slug.lower()), self.resource_reference_string, self.trigger)
 
     def content_url_path(self):
-        return u"%s/%s/grid-%s/" % (settings.CONTENT_URL, str(self.source.slug.lower()), self.pk)
+        return u"%s/%s/grid-%s/" % (settings.CONTENT_URL, str(self.source.slug.lower()), self.resource_reference_string)
 
     def content_root(self):
-        path = u"%s/%s/grid-%s/%s" % (str(settings.CONTENT_ROOT), str(self.source.slug.lower()), str(self.pk), str(self.trigger))
+        path = u"%s/%s/grid-%s/%s" % (str(settings.CONTENT_ROOT), str(self.source.slug.lower()), str(self.resource_reference_string), str(self.trigger))
         # necessary to decode things like %20, %28...
         return urllib2.unquote(path)
         
     def content_root_path(self):
-        return u"%s/%s/grid-%s/" % (settings.CONTENT_ROOT, str(self.source.slug.lower()), self.pk)
+        return u"%s/%s/grid-%s/" % (settings.CONTENT_ROOT, str(self.source.slug.lower()), self.resource_reference_string)
 
     def create_content_root(self):
         if not os.path.exists(self.content_root()):
@@ -136,15 +137,15 @@ class Resource(models.Model):
         # considers the size of the ID digits.
         # different handles for 0-9 and >=10
         if len(str(self.id)) > 1:
-            return u'%s/%s/%s/%d/%d/grid-%d.zip' % (settings.REPOSITORY_URL, str(self.source.slug.lower()), self.language.code, int(str(self.id)[-1]), int(str(self.id)[-2]), self.id)
+            return u'%s/%s/%s/%d/%d/grid-%s.zip' % (settings.REPOSITORY_URL, str(self.source.slug.lower()), self.language.code, int(str(self.id)[-1]), int(str(self.id)[-2]), self.reference_string)
         else:
-            return u'%s/%s/%s/%d/grid-%d.zip' % (settings.REPOSITORY_URL, str(self.source.slug.lower()), self.language.code, int(str(self.id)[-1]), self.id)
+            return u'%s/%s/%s/%d/grid-%s.zip' % (settings.REPOSITORY_URL, str(self.source.slug.lower()), self.language.code, int(str(self.id)[-1]), self.id)
 
     def repository_root(self):
         if len(str(self.id)) > 1:
-            return u'%s/%s/%s/%d/%d/grid-%d.zip' % (settings.REPOSITORY_ROOT, str(self.source.slug.lower()), self.language.code, int(str(self.id)[-1]), int(str(self.id)[-2]), self.id)
+            return u'%s/%s/%s/%d/%d/grid-%s.zip' % (settings.REPOSITORY_ROOT, str(self.source.slug.lower()), self.language.code, int(str(self.id)[-1]), int(str(self.id)[-2]), self.reference_string)
         else:
-            return u'%s/%s/%s/%d/grid-%d.zip' % (settings.REPOSITORY_ROOT, str(self.source.slug.lower()), self.language.code, int(str(self.id)[-1]), self.id)
+            return u'%s/%s/%s/%d/grid-%s.zip' % (settings.REPOSITORY_ROOT, str(self.source.slug.lower()), self.language.code, int(str(self.id)[-1]), self.id)
 
     def thumbnails_path(self):
         thumbs = []

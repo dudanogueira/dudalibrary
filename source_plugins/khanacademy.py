@@ -3,6 +3,8 @@ from options.models import Source, Category, Language
 import os, subprocess, urllib2, json
 from BeautifulSoup import BeautifulSoup
 
+from xml.dom.minidom import parseString
+
 from resources.models import Resource
 from dudalibrary import utils
 
@@ -38,6 +40,38 @@ class Parser(YoutubeParser):
         self.BASE_URL = u'http://www.youtube.com/watch?v='
         self.resource = None
     
+    def get_all_identifiers(self, youtubeuser=None):
+        '''return a list of all identifiers that this source can provide'''
+        print "GETTING TOTAL OF VIDEOS..."
+        if youtubeuser:
+            BASE_URL = "https://gdata.youtube.com/feeds/api/users/%s/uploads" % youtubeuser
+            f = urllib2.urlopen(BASE_URL)
+            data = f.read()
+            f.close()
+            p = parseString(data)
+            a = p.getElementsByTagName('openSearch:totalResults')
+            try:
+                total_items = int(a[0].childNodes[0].data)
+                urls = []
+                for index in range(1,total_items,50):#[0:1]:
+                    MOD_URL = BASE_URL + "?start-index=" + str(index) + "&max-results=50"
+                    f = urllib2.urlopen(MOD_URL)
+                    data = f.read()
+                    f.close()
+                    p = parseString(data)
+                    for entry in p.getElementsByTagName("entry"):
+                        url = entry.getElementsByTagName('id')[0].childNodes[0].data
+                        youtubeid = url.split("/")[-1]
+                        urls.append("%s@youtube.com" % youtubeid)
+                return urls
+            except:
+                pass    
+
+        else:
+            print "Need the youtubeuser"
+        
+    
+    
     def identify(self, url):
         YoutubeParser.identify(self, url)
         # identified already as youtube 
@@ -53,5 +87,4 @@ class Parser(YoutubeParser):
                 self.identified = True
             except:
                 self.identified = False
-            
             

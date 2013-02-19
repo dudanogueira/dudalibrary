@@ -84,7 +84,7 @@ class Activity(models.Model):
     subject = models.ForeignKey(Subject)
     title = models.CharField(blank=False, max_length=100)
     description = models.TextField(blank=True)
-    tags = TagField(max_length=2000)
+    tags = TagField(max_length=400)
     # metadata information
     created = models.DateTimeField(blank=True, default=datetime.datetime.now, auto_now_add=True)
     updated = models.DateTimeField(blank=True, default=datetime.datetime.now, auto_now=True)
@@ -97,7 +97,7 @@ class Exercise(models.Model):
     
     title = models.CharField(blank=True, max_length=100)
     description = models.TextField(blank=True)
-    tags = TagField(max_length=2000)
+    tags = TagField(max_length=400)
     # metadata information
     created = models.DateTimeField(blank=True, default=datetime.datetime.now, auto_now_add=True)
     updated = models.DateTimeField(blank=True, default=datetime.datetime.now, auto_now=True)    

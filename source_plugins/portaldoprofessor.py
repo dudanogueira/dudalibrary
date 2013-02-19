@@ -294,9 +294,9 @@ class Parser:
                 self.packed = True
                 self.download_source_folder = "%s/downloaded_source" % self.basetarget
                 subprocess.call("mkdir -vp %s" % self.download_source_folder, shell=True)
-                self.download_command = 'wget -c %s "%s" -O "%s/%s"' % (self.wget_option_str, self.resource.resource_download_url, self.download_source_folder, self.filename)
+                self.download_command = u'wget -c %s "%s" -O "%s/%s"' % (unicode(self.wget_option_str), unicode(self.resource.resource_download_url), unicode(self.download_source_folder), unicode(self.filename))
             else:
-                self.download_command = 'wget -c %s "%s" -O "%s/%s"' % (self.wget_option_str, self.resource.resource_download_url, self.basetarget, self.filename)
+                self.download_command = u'wget -c %s "%s" -O "%s/%s"' % (self.wget_option_str, self.resource.resource_download_url, self.basetarget, str(self.filename))
             subprocess.call(self.download_command, shell=True)
             # if packed, unpack
             if self.packed:

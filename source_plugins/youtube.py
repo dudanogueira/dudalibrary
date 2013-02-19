@@ -46,7 +46,7 @@ class Parser(object):
         self.BASE_URL = u'http://www.youtube.com/watch?v='
         self.resource = None
         self.json_url_raw = "http://gdata.youtube.com/feeds/api/videos/%s?v=2&alt=jsonc"
-    
+
 
     def identify(self, url):
         '''return True if the url belongs to this Parser
@@ -80,7 +80,7 @@ class Parser(object):
         # test the others
         else:
             try:
-                if self.url.find("www.youtube.com") != -1:
+                if self.url.find("youtube.com") != -1:
                     self.query = urlparse.parse_qs(self.url.split('?')[1]) 
                     self.video_id = str(self.query["v"][0])
                     self.resource_slug = self.SOURCE_SLUG
@@ -93,7 +93,6 @@ class Parser(object):
                 else:
                     self.identified = False
             except:
-                raise
                 self.identified = False
     
     def parse(self, url=None):
@@ -139,7 +138,11 @@ class Parser(object):
             self.parsed = False
             print "ERROR. Not parsed"
     
-    def download(self):
+    def download(self, download_method=None):
+        if not download_method:
+            download_method = getattr(settings, 'YOUTUBE_DOWNLOAD_METHOD', None)
+        if download_method == 'youtube_downloader' or None:
+            print "METHOD: %s" % download_method
             # check files, paths, thumbnails, etc
             yt = youtube_downloader.YouTube()
             yt.url = self.full_url
@@ -156,6 +159,21 @@ class Parser(object):
             self.resource.size = utils.folder_size(self.resource.content_root_path())
             self.resource.check_files()
             self.resource.generate_thumb()
+        elif download_method == 'youtube-dl':
+            print "METHOD: %s" % download_method
+            dlcmd = 'python %s/youtube-dl.py -c --write-info-json --write-description -f 18 %s' % (settings.INSTANCE(), self.full_url)
+            print "COMMAND: %s" % dlcmd
+            self.resource.create_content_root()
+            os.chdir(self.resource.content_root_path())
+            try:
+                p = subprocess.call(dlcmd, shell=True)
+                self.resource.status = "installed"
+                self.resource.enabled = True
+                self.resource.trigger = "%s.%s" % (youtubeid, "mp4")
+            except:
+                self.resource.enabled = False
+                self.resource.status = "error"
+            
 
             
             

@@ -160,6 +160,7 @@ def activity_details_request_resource(request, object_id):
                         plugin_slug=item.PLUGIN_SLUG,
                         request_user=request.user,
                         full_url=item.full_url,
+                        priority=1,
                     )
                     if created:
                         # create celery queue too

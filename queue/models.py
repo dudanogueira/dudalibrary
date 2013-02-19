@@ -16,6 +16,9 @@ class ResourceQueue(models.Model):
     def __unicode__(self):
         return "Queue for %s" % self.identifier_id
     
+    class Meta:
+        ordering = ['priority']
+    
     def run(self):
         '''
         run the queued resource according to the plugin_name
@@ -45,13 +48,14 @@ class ResourceQueue(models.Model):
         
     
     status = models.CharField(blank=False, default="queued", max_length=100, choices=RESOURCE_QUEUE_STATUS_CHOICES)
+    priority = models.IntegerField(blank=False, null=False, default=10, help_text="lower the better")
     full_url = models.URLField(blank=True, verify_exists=False)
     identifier_id = models.CharField(blank=False, null=False, max_length=500)
     plugin_name = models.CharField(blank=False, null=False, max_length=300)
     plugin_slug = models.CharField(blank=False, null=False, max_length=100)
     log = models.TextField(blank=True, null=True)
     runned = models.DateTimeField(blank=True, null=True)
-    request_user = models.ForeignKey(User)
+    request_user = models.ForeignKey(User, null=True, blank=True)
     # metadata information
     created = models.DateTimeField(blank=True, auto_now_add=True)
     updated = models.DateTimeField(blank=True, auto_now=True)
