@@ -173,6 +173,7 @@ class Parser(object):
             except:
                 self.resource.enabled = False
                 self.resource.status = "error"
+            self.resource.save()
             
 
             
