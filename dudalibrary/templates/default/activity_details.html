@@ -72,7 +72,7 @@
       <div class="tab-content">
           {# ADD RESOURCE #}
         <div class="tab-pane active" id="activity_add">
-            <form method="post" action="{% url activity_details_request_resource activity.id %}">
+            <form method="post" action="">
                 {% csrf_token %}
                 <small>{% trans "Type the URLs here, one per line" %}</small>
                 <textarea name="resources_to_process" class="input-block-level input-medium"></textarea>

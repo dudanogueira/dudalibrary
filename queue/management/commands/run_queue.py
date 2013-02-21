@@ -11,6 +11,6 @@ from queue.models import ResourceQueue
 class Command(BaseCommand):
     help = "Enqueue items to download."
     def handle(self, *args, **kwargs):
-        queues = ResourceQueue.objects.filter(status="queued")
+        queues = ResourceQueue.objects.all()#filter(status="queued")
         for queue in queues:
             queue.run()

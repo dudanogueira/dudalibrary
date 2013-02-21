@@ -8,13 +8,11 @@
 
 {% block content %}
     <link href="{{STATIC_URL}}frontend/bootstrap/css/bootstrap.css" rel="stylesheet">
-	<h2>{% trans "Add a Custom Content" %}</h2>
-    <h5>{% trans "Current Site Domain"%}: {{current_site}}</h5>
-    <p>{% trans "Your content will be identified as" %}: <b>someid@{{current_site}}</b></p>
-    <form method="post" class="form-horizontal" enctype="multipart/form-data">
+	<h2>{% trans "Put Items on Queue" %}</h2>
+    <form method="post" class="form-horizontal">
         {% csrf_token %}
-        {{form.as_p}}
-        <input class="btn" type="submit" value="{% trans 'Add Custom Content' %}" />
+        <textarea name="resources_to_process"></textarea>
+        <p><input class="btn" type="submit" value="{% trans 'Add Custom Content' %}" /></p>
     </form>
     
 {% endblock %}

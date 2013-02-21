@@ -34,6 +34,7 @@ class ResourceQueue(models.Model):
                     parsed.parse(self.identifier_id)
                     parsed.index()
                     parsed.download()
+                    parsed.resource.generate_thumb()
                     activity_queued_item_delivery(self, parsed.resource)
                     self.status = "done"
                     self.save()

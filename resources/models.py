@@ -40,7 +40,7 @@ class Resource(models.Model):
     # resource identifier
     resource_reference_string = models.CharField(blank=True, max_length=500)
     # global resource identificator
-    globalid = models.IntegerField(blank=True, null=True)
+    globalid = models.CharField(blank=True, null=True, help_text=_("This is for Custom Resources Only. Its the part for globalid@yourdomain.com"), max_length=100)
     custom_resource = models.BooleanField(default=False)
     # enabled, featured, etc
     enabled = models.BooleanField(default=False)
@@ -355,149 +355,7 @@ class Resource(models.Model):
             self.save()
             return False
 
-# CUSTOM RESOURCE CLASS
-class CustomResource:
-    '''this class receives an url and optional mode to grab resource contents
-    and isnert into the system as a custom resource'''
 
-    def __init__(self, url, resource=None, enqueue=False):
-        # default
-        self.error = 'no error'
-        self.source = Source.objects.get(pk=1)
-        self.resource = resource
-        self.source_id = 1
-        self.resource_url = url
-        self.enqueue = enqueue
-        self.category = []
-        videocat = Category.objects.get(code='video')
-        hypercat = Category.objects.get(code='hypertext')
-        # define mode
-        if 'youtube.com' in url:
-            self.mode = 'youtube'
-            self.category.append(videocat)
-        elif 'vimeo.com' in url:
-            self.mode = 'vimeo'
-            self.category.append(videocat)
-        elif 'wikipedia.org' in url:
-            self.mode = 'wikipedia'
-            self.category.append(hypercat)
-        else:
-            self.mode = None
-        # define reference string
-        # its a md5 hash of the url
-        self.resource_reference_string = self.resource_url
-        # get the object model:
-        self.get_model_object()
-
-    def get_model_object(self):
-        # check if we have a resource
-        if self.resource and self.resource.module_name() == 'resource':
-            self.resource
-        else:
-            self.resource,self.created = Resource.objects.get_or_create(
-                resource_reference_string=self.resource_reference_string, source=self.source, resource_url=self.resource_url,
-                custom_resource = True
-            )
-            return self.resource
-
-    def download(self, clear=False):
-        '''download files and infos to content to folder'''
-        if clear:
-            pass
-            # remove files from folder
-        else:
-            pass
-        # change to content folder
-        if self.mode != 'wikipedia':
-            #python youtube-dl.py -c --write-info-json --prefer-free-formats http://--
-            self.dlcmd = 'python %s/youtube-dl.py -c --write-info-json --write-description --prefer-free-formats %s' % (settings.INSTANCE(), self.resource_url)
-        else:
-            self.dlcmd = 'download wikipedia'
-        # create dirs
-        self.resource.create_content_root()
-        # change to it
-        os.chdir(self.resource.content_root_path())
-        try:
-            #os.system(dlcmd)
-            p = subprocess.call(self.dlcmd, shell=True)
-            self.resource.status = 'downloaded'
-            self.resource.save()
-        except:
-            self.resource.status = 'error'
-            self.resource.save()
-
-    def locate_json(self):
-        json = locate('*info.json', os.path.dirname(self.resource.content_root()))
-        self.info_json = []
-        for i in json:
-            self.info_json.append(i)
-    
-    def locate_description(self):
-        descfiles = locate('*.description', os.path.dirname(self.resource.content_root()))
-        self.description_files = []
-        for i in descfiles:
-            self.description_files.append(i)
-    
-    def intake(self):
-        '''copy files to the rightplace and import infos to DB'''
-        if self.resource.status == 'downloaded':
-            # retrieve files from the info.json
-            self.locate_json()
-            self.locate_description()
-            if len(self.info_json) == 1 and len(self.description_files) == 1:
-                self.json = self.info_json[0]
-                desc_f_obj = open(self.description_files[0])
-                json_file = open(self.json)
-                try:
-                    self.json_data = json.load(json_file)
-                    self.resource.title = self.json_data.get('title')
-                    description = desc_f_obj.read()
-                    description = description.replace("&quot;", '"')
-                    self.resource.description = description
-                    self.resource.trigger = "%s.%s" % (self.json_data.get('id'), self.json_data.get('ext'))
-                    self.resource.resource_downloaded_file = self.resource.trigger
-                    pdate = self.json_data.get('upload_date')
-                    self.resource.published = datetime.date(int(pdate[0:4]), int(pdate[4:6]), int(pdate[6:8]))
-                    self.resource.author = "uploaded by %s at <a href='%s'>%s</a>" % (self.json_data.get('uploader'), self.resource.resource_url, self.resource.resource_url)
-                    self.size = folder_size(os.path.dirname(self.resource.content_root()))
-                    self.resource.size = self.size
-                    self.resource.category = self.category
-                    # thumbnails
-                    ffmpeg = find_program_path('ffmpeg')
-                    if ffmpeg:
-                        #generate thumbs
-                        self.resource.generate_thumb()
-                    else:
-                        # download from url
-                        thumb_url = self.json_data.get('thumbnail')
-                        filename = "%s%s" % (self.resource.content_root_path(), thumb_url.rsplit("/")[-1])
-                        output = open(filename, "w")
-                        response = urllib2.urlopen(thumb_url)
-                        data = response.read()
-                        output.write(data)
-                        output.close()
-                        img = Image.open(filename)
-                        outfile = "%s/thumbnail-1.jpg" % self.resource.content_root_path()
-                        img.save(outfile)
-                    if self.mode == 'youtube':
-                        #get more data from youtube
-                        json_url = "http://gdata.youtube.com/feeds/api/videos/%s?v=2&alt=jsonc" % self.json_data.get('id')
-                        request = urllib2.urlopen(json_url)
-                        self.youtube_json_data = json.load(request)
-                        self.resource.description = self.youtube_json_data['data'].get('description')
-                        # this should go to tags...
-                        self.resource.tags = ', '.join(self.youtube_json_data['data'].get('tags'))
-                        self.resource.save()
-                except:
-                    self.error = 'error loading json file'
-                    raise
-            else:
-                self.error = "more then 1 json file or description file founded. Try checking the clear folder option"
-            self.resource.enabled = True
-            self.resource.status = 'installed'
-            self.resource.save()
-        else:
-            self.error = "can't intake: file is NOT downloaded"
 
 #ratings conf
 from ratings.handlers import ratings

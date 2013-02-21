@@ -7,12 +7,15 @@ from django.core.urlresolvers import reverse
 from django.http import QueryDict
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 
+from dudalibrary import utils
+
 from django.template import RequestContext, loader, Context
 from django.views.generic import ListView, DetailView
 
 from django.utils.translation import ugettext_lazy as _
 
-from resources.models import Resource, CustomResource
+from resources.models import Resource
+from options.models import Source
 from queue.models import ResourceQueue
 from queue.tasks import add_resource_to_queue
 from django import forms
@@ -28,10 +31,51 @@ from curricular.models import CurricularGrade, Activity, ActivityItem, SubjectCl
 
 from django.conf import settings
 
+from django.contrib.sites.models import get_current_site
+
 CONTENT_PER_PAGE = getattr(settings, 'CONTENT_PER_PAGE', 10)
 TAGGING_RELATED_RESOURCE_LIST_NUM = getattr(settings, 'TAGGING_RELATED_RESOURCE_LIST_NUM', 10)
 
-search_fields = ['description', 'title']
+import os
+
+class ExtFileField(forms.FileField):
+    """
+    Same as forms.FileField, but you can specify a file extension whitelist.
+    
+    >>> from django.core.files.uploadedfile import SimpleUploadedFile
+    >>>
+    >>> t = ExtFileField(ext_whitelist=(".pdf", ".txt"))
+    >>>
+    >>> t.clean(SimpleUploadedFile('filename.pdf', 'Some File Content'))
+    >>> t.clean(SimpleUploadedFile('filename.txt', 'Some File Content'))
+    >>>
+    >>> t.clean(SimpleUploadedFile('filename.exe', 'Some File Content'))
+    Traceback (most recent call last):
+    ...
+    ValidationError: [u'Not allowed filetype!']
+    """
+    def __init__(self, *args, **kwargs):
+        ext_whitelist = kwargs.pop("ext_whitelist")
+        self.ext_whitelist = [i.lower() for i in ext_whitelist]
+
+        super(ExtFileField, self).__init__(*args, **kwargs)
+
+    def clean(self, *args, **kwargs):
+        data = super(ExtFileField, self).clean(*args, **kwargs)
+        filename = data.name
+        ext = os.path.splitext(filename)[1]
+        ext = ext.lower()
+        if ext not in self.ext_whitelist:
+            raise forms.ValidationError("Not allowed filetype!")
+
+
+
+class NewCustomResourceForm(forms.ModelForm):
+    file  = ExtFileField(ext_whitelist=(".zip",), help_text=_('ZIP files allowed only'))
+    
+    class Meta:
+        model = Resource
+        fields = ('globalid', 'title', 'structure', 'description', 'objective', 'author', 'notes', 'license', 'language', 'category', 'status', 'tags', 'file')
 
 class AddCurricularClassForm(forms.ModelForm):
     class Meta:
@@ -117,69 +161,6 @@ def resource_details(request, object_id):
     app_label = resource._meta.app_label
     return render_to_response('resource_details.html', locals(),
         context_instance=RequestContext(request),)
-
-@staff_member_required
-def activity_details_request_resource(request, object_id):
-    if request.POST:
-        activity = Activity.objects.get(pk=object_id)
-        raw_data = request.POST.get('resources_to_process', None)
-        data = raw_data.splitlines()
-        for line in data:
-            item = resource_identifier(line)
-            # check if item is identified
-            if item and item.identified:
-                # set order in activity
-                try:
-                    order = activity.activityitem_set.order_by('-order')[0].order + 1
-                except:
-                    order = 1
-                # check if resource already exists
-                try:
-                    resource = Resource.objects.get(
-                        resource_reference_string=item.identifier_id
-                    )
-                    # resource is installed, lets add to the activity
-                    if resource.status == "installed":
-                        contenttype = ContentType.objects.get_for_model(resource)
-                        activity_item = ActivityItem.objects.create(
-                            order=order,
-                            content_type_id=contenttype.id,
-                            object_id=resource.id,
-                            activity=activity,
-                        )
-                        messages.success(request, u'O Recurso %s (ID: %s) Foi adicionado à atividade %s!' % (resource, item.identifier_id, activity))
-                    elif resource.status == "rejected":
-                        messages.error(request, u'<b>Error!</b> Rejected Resource!')
-                except Resource.DoesNotExist:
-                    # no resource found with this identifier,
-                    # lets add to the queue                
-                    # get or create a queue item
-                    queue,created = ResourceQueue.objects.get_or_create(
-                        identifier_id=item.identifier_id,
-                        plugin_name=item.PLUGIN_NAME,
-                        plugin_slug=item.PLUGIN_SLUG,
-                        request_user=request.user,
-                        full_url=item.full_url,
-                        priority=1,
-                    )
-                    if created:
-                        # create celery queue too
-                        if getattr(settings, 'USE_CELERY', False):
-                            add_resource_to_queue.delay(queue.id)
-                        contenttype = ContentType.objects.get_for_model(queue)
-                        # add activity item first
-                        activity_item = ActivityItem.objects.create(
-                            order=order,
-                            content_type_id=contenttype.id,
-                            object_id=queue.id,
-                            activity=activity,
-                        )
-                        messages.info(request, u'<b>%s</b> foi identificado como pertencendo ao %s e Adicionado à Lista de Downloads' % (item.identifier_id, item.SOURCE_NAME))
-                    else:
-                        messages.info(request, u'<b>Informação!</b>! %s Já está na Lista de Download' % item.identifier_id)                
-            else:
-                messages.warning(request, u'<b>Atenção!</b>! %s Não identificado!' % (line))
-    return redirect(reverse("activity_details", args=[object_id]))
 
 def index(request):
     searchform = SearchForm(request.GET)
@@ -297,24 +278,125 @@ class TopVotesView(TopHitsView):
                 objects.append(i)
         return objects
 
+def handle_new_custom_resource(f, path=None):
+    if path:
+        with open('%s/source.zip' % path, 'wb+') as destination:
+                for chunk in f.chunks():
+                    destination.write(chunk)
+    
+    
+def admin_enqueue_resources(request):
+    if request.POST:
+        raw_data = request.POST.get('resources_to_process', None)
+        data = raw_data.splitlines()
+        for identifier in data:
+            # identify this identifier_id
+            item = utils.resource_identifier(identifier)
+            if item and item.identified:
+                queue,created = ResourceQueue.objects.get_or_create(
+                    identifier_id=item.identifier_id,
+                    plugin_name=item.PLUGIN_NAME,
+                    plugin_slug=item.PLUGIN_SLUG,
+                    full_url=item.full_url,
+                    priority=1,
+                )
+                if created:
+                    messages.success(request, _('Identifier %s has been Queued') % item.identifier_id)
+            else:
+                messages.error(request, _('Identifier %s HAS NOT BEEN QUEUED!') % item.identifier_id)
+    
+    
+    return render_to_response('admin/admin_enqueue_resources.html', locals(),
+        context_instance=RequestContext(request),)
+
 def add_custom(request):
-    ''' this is a admin view'''
-    if request.GET:
-        urls = request.GET.get('urls', '')
-        analyze_items = urls.splitlines()
-        report = []
-        for url in analyze_items:
-            cr = CustomResource(url)
-            cr.get_model_object()
-            cr.download()
-            cr.intake()
-            report.append(cr)
+    ''' this is a admin view to add custom contents'''
+    current_site = get_current_site(request)
+    
+    if request.method == 'POST':
+            form = NewCustomResourceForm(request.POST, request.FILES)
+            if form.is_valid():
+                new_custom_resource = form.save(commit=False)
+                new_custom_resource.custom = True
+                new_custom_resource.enabled = False
+                new_custom_resource.status = "processing"
+                if not new_custom_resource.globalid:
+                    new_custom_resource.globalid = new_custom_resource.pk
+                # get custom source
+                source,created = Source.objects.get_or_create(slug=current_site)
+                new_custom_resource.source = source
+                new_custom_resource.resource_reference_string = "%s@%s" % (new_custom_resource.globalid, new_custom_resource.source.slug)
+                new_custom_resource.save()
+                new_custom_resource.create_content_root()
+                handle_new_custom_resource(request.FILES['file'], new_custom_resource.content_root())
+                
+    else:
+        form = NewCustomResourceForm()
+        
     return render_to_response('add_custom_resource.html', locals(),
         context_instance=RequestContext(request),)
 
 def activity_details(request, object_id):
     activity = get_object_or_404(Activity, id=object_id)
     curricular_grades = CurricularGrade.objects.filter(parent=None)
+    if request.POST:
+        raw_data = request.POST.get('resources_to_process', None)
+        data = raw_data.splitlines()
+        for line in data:
+            item = resource_identifier(line)
+            # check if item is identified
+            if item and item.identified:
+                # set order in activity
+                try:
+                    order = activity.activityitem_set.order_by('-order')[0].order + 1
+                except:
+                    order = 1
+                # check if resource already exists
+                try:
+                    resource = Resource.objects.get(
+                        resource_reference_string=item.identifier_id
+                    )
+                    # resource is installed, lets add to the activity
+                    if resource.status == "installed":
+                        contenttype = ContentType.objects.get_for_model(resource)
+                        activity_item = ActivityItem.objects.create(
+                            order=order,
+                            content_type_id=contenttype.id,
+                            object_id=resource.id,
+                            activity=activity,
+                        )
+                        messages.success(request, u'O Recurso %s (ID: %s) Foi adicionado à atividade %s!' % (resource, item.identifier_id, activity))
+                    elif resource.status == "rejected":
+                        messages.error(request, u'<b>Error!</b> Rejected Resource!')
+                except Resource.DoesNotExist:
+                    # no resource found with this identifier,
+                    # lets add to the queue                
+                    # get or create a queue item
+                    queue,created = ResourceQueue.objects.get_or_create(
+                        identifier_id=item.identifier_id,
+                        plugin_name=item.PLUGIN_NAME,
+                        plugin_slug=item.PLUGIN_SLUG,
+                        request_user=request.user,
+                        full_url=item.full_url,
+                        priority=1,
+                    )
+                    if created:
+                        # create celery queue too
+                        if getattr(settings, 'USE_CELERY', False):
+                            add_resource_to_queue.delay(queue.id)
+                        contenttype = ContentType.objects.get_for_model(queue)
+                        # add activity item first
+                        activity_item = ActivityItem.objects.create(
+                            order=order,
+                            content_type_id=contenttype.id,
+                            object_id=queue.id,
+                            activity=activity,
+                        )
+                        messages.info(request, u'<b>%s</b> foi identificado como pertencendo ao %s e Adicionado à Lista de Downloads' % (item.identifier_id, item.SOURCE_NAME))
+                    else:
+                        messages.info(request, u'<b>Informação!</b>! %s Já está na Lista de Download' % item.identifier_id)                
+            else:
+                messages.warning(request, u'<b>Atenção!</b>! %s Não identificado!' % (line))
     return render_to_response('activity_details.html', locals(),
         context_instance=RequestContext(request),)
 

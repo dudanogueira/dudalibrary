@@ -3,6 +3,8 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
+from django.contrib.sites.models import Site
+
 # Create your models here.
 class Category(models.Model):
 
@@ -41,6 +43,13 @@ class Source(models.Model):
 
     class Meta:
         ordering = ['name']
+    
+    def domain(self):
+        if not self.url:
+            current_site = Site.objects.get_current()
+            return current_site.domain
+        else:
+            return self.url
 
     name = models.CharField(blank=True, max_length=500)
     slug = models.CharField(blank=True, max_length=400)

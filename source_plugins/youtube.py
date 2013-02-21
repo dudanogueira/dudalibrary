@@ -169,11 +169,10 @@ class Parser(object):
                 p = subprocess.call(dlcmd, shell=True)
                 self.resource.status = "installed"
                 self.resource.enabled = True
-                self.resource.trigger = "%s.%s" % (youtubeid, "mp4")
+                self.resource.trigger = "%s.%s" % (self.reference_id, "mp4")
             except:
                 self.resource.enabled = False
                 self.resource.status = "error"
-            self.resource.save()
             
 
             

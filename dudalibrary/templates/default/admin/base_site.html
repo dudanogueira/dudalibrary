@@ -22,7 +22,7 @@ a.section:link, a.section:visited { color: #666666; }
 {% block branding %}
 <h1 id="site-name">LOGO {% trans "Duda Library" %}</h1>
 <div id="custom-menu">
-	<p><a href="{% url add_custom_resource_url %}">{% trans "Add Custom Content" %}</a> | <a href="">{% trans "System Status" %}</a></p>
+	<p><a href="{% url add_custom_resource_url %}">{% trans "Add Custom Content" %}</a> |       <a href="{% url admin_enqueue_resources %}">{% trans "Enqueue Resources" %}</a></p>
 </div>
 {% endblock %}
 

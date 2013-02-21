@@ -2,25 +2,27 @@ dudalibrary
 ===========
 
 
-Open Source OER (Open Educational Resource) Manager
+Open Source OER (Open Educational Resource) Manager (beta)
 
+This software is still in beta. If you find any problems, let us know!
 
 Installation for test/dev
 ===========
-1) Copy the dudalibrary/settings.py.dist to dudalibrary/settings.py
-2) Synchronize the database by running: python manage.py syncdb
-3) Migrate the datavase by running: python manage.py syncdb
-4) Run the test/dev server by running: python manage.py runserver
-5) Access Duda Library at: http://127.0.0.1
+ * Copy the dudalibrary/settings.py.dist to dudalibrary/settings.py
+ * Install the requirements: See below
+ * Synchronize the database by running: python manage.py syncdb
+ * Migrate the datavase by running: python manage.py syncdb
+ * Run the test/dev server by running: python manage.py runserver
+ * Access Duda Library at: http://127.0.0.1:8000
 
 Installation for production
 ===========
 
 For a production use case, you certainly will want to:
-- Make use of a real web server under it (eg: Apache, etc)
-- Make use of MySql or PostgreSQL databases.
-- Make sure you can read/write all path listed on settings.py (future check command to come!)
-- Make sure to change the secret from settings.py to a private one ;)
+ * Make use of a real web server under it (eg: Apache, etc)
+ * Make use of MySql or PostgreSQL databases.
+ * Make sure you can read/write all path listed on settings.py (future check command to come!)
+ * Make sure to change the secret from settings.py to a private one ;)
 
 Dependencies
 ===========

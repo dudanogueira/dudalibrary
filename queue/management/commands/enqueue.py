@@ -11,6 +11,7 @@ from queue.models import ResourceQueue
 class Command(BaseCommand):
     help = "Enqueue items to download."
     def handle(self, *args, **kwargs):
+        print args
         for identifier in args:
             # identify this identifier_id
             item = utils.resource_identifier(identifier)
