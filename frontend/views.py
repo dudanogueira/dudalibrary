@@ -339,6 +339,7 @@ def add_custom(request):
 def activity_details(request, object_id):
     activity = get_object_or_404(Activity, id=object_id)
     curricular_grades = CurricularGrade.objects.filter(parent=None)
+    # add activity
     if request.POST:
         raw_data = request.POST.get('resources_to_process', None)
         data = raw_data.splitlines()
@@ -346,31 +347,10 @@ def activity_details(request, object_id):
             item = resource_identifier(line)
             # check if item is identified
             if item and item.identified:
-                # set order in activity
-                try:
-                    order = activity.activityitem_set.order_by('-order')[0].order + 1
-                except:
-                    order = 1
                 # check if resource already exists
                 try:
-                    resource = Resource.objects.get(
-                        resource_reference_string=item.identifier_id
-                    )
-                    # resource is installed, lets add to the activity
-                    if resource.status == "installed":
-                        contenttype = ContentType.objects.get_for_model(resource)
-                        activity_item = ActivityItem.objects.create(
-                            order=order,
-                            content_type_id=contenttype.id,
-                            object_id=resource.id,
-                            activity=activity,
-                        )
-                        messages.success(request, u'O Recurso %s (ID: %s) Foi adicionado à atividade %s!' % (resource, item.identifier_id, activity))
-                    elif resource.status == "rejected":
-                        messages.error(request, u'<b>Error!</b> Rejected Resource!')
-                except Resource.DoesNotExist:
                     # no resource found with this identifier,
-                    # lets add to the queue                
+                    # lets add to the queue 
                     # get or create a queue item
                     queue,created = ResourceQueue.objects.get_or_create(
                         identifier_id=item.identifier_id,
@@ -381,9 +361,14 @@ def activity_details(request, object_id):
                         priority=1,
                     )
                     if created:
+                        # set order in activity
+                        try:
+                            order = activity.activityitem_set.order_by('-order')[0].order + 1
+                        except:
+                            order = 1
                         # create celery queue too
-                        if getattr(settings, 'USE_CELERY', False):
-                            add_resource_to_queue.delay(queue.id)
+                        #if getattr(settings, 'USE_CELERY', False):
+                        #    add_resource_to_queue.delay(queue.id)
                         contenttype = ContentType.objects.get_for_model(queue)
                         # add activity item first
                         activity_item = ActivityItem.objects.create(
@@ -395,6 +380,9 @@ def activity_details(request, object_id):
                         messages.info(request, u'<b>%s</b> foi identificado como pertencendo ao %s e Adicionado à Lista de Downloads' % (item.identifier_id, item.SOURCE_NAME))
                     else:
                         messages.info(request, u'<b>Informação!</b>! %s Já está na Lista de Download' % item.identifier_id)                
+
+                except:
+                    raise
             else:
                 messages.warning(request, u'<b>Atenção!</b>! %s Não identificado!' % (line))
     return render_to_response('activity_details.html', locals(),

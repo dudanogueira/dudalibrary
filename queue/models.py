@@ -31,7 +31,7 @@ class ResourceQueue(models.Model):
             )
             if parsed and parsed.identified:
                 try:
-                    parsed.parse(self.identifier_id)
+                    parsed.parse()
                     parsed.index()
                     parsed.download()
                     parsed.resource.generate_thumb()

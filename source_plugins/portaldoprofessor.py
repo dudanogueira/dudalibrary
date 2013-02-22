@@ -9,6 +9,8 @@ from dudalibrary import utils
 from django.conf import settings
 from django.utils.encoding import smart_str, smart_unicode
 
+from django.template.defaultfilters import slugify
+
 CATEGORY_DICT = {
     "audio": 9,
     "imagem": 2,
@@ -85,12 +87,8 @@ class Parser:
             except:
                 self.identified = False
     
-    def parse(self, url=None):
+    def parse(self):
         '''identify and parse the url into a registered Resource Object'''
-        if url:
-            self.url = url
-        # parse already try to identify
-        self.identify(url)
         if(self.identified):
             f = urllib.urlopen(self.full_url)
             s = f.read()
@@ -227,9 +225,9 @@ class Parser:
                 # enJOIN them ;)
                 tags = ",".join(tags)
                 self.tags = tags
-                self.parsed = True
+                self.parsed = True                
+                # return object
                 return self
-
 
             except:
                 raise
@@ -248,6 +246,41 @@ class Parser:
             self.resource,self.resource_created = Resource.objects.get_or_create(
                 resource_reference_string=self.resource_reference_string, source=source, resource_url=self.full_url
             )
+            # prepare infos for download
+            self.work_folder = os.path.dirname(smart_str(self.resource.content_root()))
+            self.packed = False
+            self.filename = urllib.unquote(str(self.resource.resource_download_url.split('?')[0].split('/')[-1]))
+            self.filename_extension = self.filename.split(".")[-1]
+            self.filename_basename = self.filename.split(".")[0]
+            self.filename_basename_slugified = slugify(self.filename_basename)
+            
+            self.wget_option_str = ''
+            self.DOWNLOAD_LIMIT_RATE = getattr(settings, 'DOWNLOAD_LIMIT_RATE', None)
+            if self.DOWNLOAD_LIMIT_RATE:
+                self.wget_option_str = "--limit-rate=%s" % self.DOWNLOAD_LIMIT_RATE
+            if 'zip' in self.filename_basename_slugified or 'rar' in self.filename_basename_slugified:
+                self.packed = True
+                self.download_source_folder = "%s/downloaded_source" % self.work_folder
+                self.download_command = u'wget -c %s "%s" -O "%s/%s.%s"' % \
+                (
+                    smart_str(self.wget_option_str),
+                    smart_str(self.direct_link),
+                    smart_str(self.download_source_folder),
+                    smart_str(self.filename_basename_slugified),
+                    smart_unicode(self.filename_extension)
+                )
+                self.resource.trigger = self.trigger
+            else:
+                self.download_command = u'wget -c %s "%s" -O "%s/%s.%s"' % \
+                (
+                    smart_str(self.wget_option_str),
+                    smart_unicode(self.direct_link),
+                    smart_str(self.work_folder),
+                    smart_unicode(self.filename_basename_slugified),
+                    smart_unicode(self.filename_extension),
+                )
+                self.resource.trigger = "%s.%s" % (self.filename_basename_slugified, self.filename_extension) 
+            
             # identifier
             self.resource.reference_string = self.identifier_id
             self.resource.title = self.text_sanitizer(self.title)
@@ -257,7 +290,6 @@ class Parser:
             self.resource.description = self.text_sanitizer(self.description)
             self.resource.author = self.authors
             self.resource.notes = self.text_sanitizer(self.notes)
-            self.resource.trigger = self.trigger
             self.resource.trigger_extension = self.trigger_extension
             self.resource.language = self.language
             self.resource.resource_download_url = self.direct_link
@@ -281,35 +313,24 @@ class Parser:
         if not self.resource:
             print "Error. Can't download. No Resource found. Try parsing and saving first."
         else:
-            work_folder = os.path.dirname(smart_str(self.resource.content_root()))
-            subprocess.call("mkdir -vp %s" % work_folder, shell=True)
-            self.packed = False
-            self.filename = urllib.unquote(str(self.resource.resource_download_url.split('?')[0].split('/')[-1]))
-            self.basetarget = os.path.dirname(smart_str(self.resource.content_root()))
-            self.wget_option_str = ''
-            self.DOWNLOAD_LIMIT_RATE = getattr(settings, 'DOWNLOAD_LIMIT_RATE', None)
-            if self.DOWNLOAD_LIMIT_RATE:
-                self.wget_option_str = "--limit-rate=%s" % self.DOWNLOAD_LIMIT_RATE
-            if 'zip' in self.filename or 'rar' in self.filename:
-                self.packed = True
-                self.download_source_folder = "%s/downloaded_source" % self.basetarget
+            # create dirs
+            subprocess.call("mkdir -vp %s" % self.work_folder, shell=True)
+            # create source folder, as its packed
+            if self.packed:
                 subprocess.call("mkdir -vp %s" % self.download_source_folder, shell=True)
-                self.download_command = u'wget -c %s "%s" -O "%s/%s"' % (unicode(self.wget_option_str), unicode(self.resource.resource_download_url), unicode(self.download_source_folder), unicode(self.filename))
-            else:
-                self.download_command = u'wget -c %s "%s" -O "%s/%s"' % (smart_unicode(self.wget_option_str), smart_unicode(self.resource.resource_download_url), smart_unicode(self.basetarget), smart_unicode(self.filename))
             subprocess.call(self.download_command, shell=True)
             # if packed, unpack
             if self.packed:
-                if 'zip' in self.filename:
+                if 'zip' in self.filename_basename_slugified:
                     if utils.find_program_path('unzip'):
-                        self.unpack_command = "unzip -o '%s/%s' -d %s" % (self.download_source_folder, self.filename, self.basetarget)
+                        self.unpack_command = "unzip -o '%s/%s' -d %s" % (self.download_source_folder, self.filename_basename_slugified, self.work_folder)
                     else:
                         print "No Unzip tools found (unzip)"
-                elif 'rar' in self.filename:
+                elif 'rar' in self.filename_basename_slugified:
                     if utils.find_program_path('unrar'):
-                        self.unpack_command = "unrar e -o+ '%s/%s' %s" % (self.download_source_folder, self.filename, self.basetarget)
+                        self.unpack_command = "unrar e -o+ '%s/%s' %s" % (self.download_source_folder, self.filename_basename_slugified, self.work_folder)
                     elif utils.find_program_path('rar'):
-                        self.unpack_command = "rar e -o+ '%s/%s' %s" % (self.download_source_folder, self.filename, self.basetarget)
+                        self.unpack_command = "rar e -o+ '%s/%s' %s" % (self.download_source_folder, self.filename_basename_slugified, self.work_folder)
                     else:
                         print "No Rar tools found (rar nor unrar)"
                 #unpack, keeping the pack for reference

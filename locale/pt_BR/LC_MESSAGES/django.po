@@ -275,15 +275,15 @@ msgstr "Adicionar nova Matéria"
 
 #: dudalibrary/templates/default/curricular_grade_details.html:16
 msgid "Add Class"
-msgstr "Adicionar Classe"
+msgstr "Adicionar Série"
 
 #: dudalibrary/templates/default/curricular_grade_details.html:36
 msgid "Add Activities"
-msgstr ""
+msgstr "Adicionar Atividades"
 
 #: dudalibrary/templates/default/curricular_grade_details.html:41
 msgid "Add a new Class"
-msgstr "Adicionar nova Classe"
+msgstr "Adicionar nova Série"
 
 #: dudalibrary/templates/default/featured_list.html:19
 msgid "More"
