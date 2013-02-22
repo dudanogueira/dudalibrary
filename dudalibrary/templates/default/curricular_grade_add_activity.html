@@ -15,14 +15,14 @@
     
     {% else %}
         {% if subjects %}
-            <h4>{% trans "Use an existing" %} {% trans "Subject Class" %}</h4>
+            <h4>{% trans "Use an existing Subject Class" %}</h4>
             <ul>
             {% for subject in subjects %}
             <li><a href="?subject_id={{subject.id}}">{{subject.title}}</a></li>
             {% endfor %}
             </ul>
         {%endif %}
-        <h4>{% trans "Add a New" %} {% trans "Subject Class" %}</h4>
+        <h4>{% trans "Add a New Subject Class" %}</h4>
         <form method="POST">
             {% csrf_token %}
             {{form_add_subject_class}}

@@ -4,7 +4,7 @@
 <div id="add-curricular-activity">    
     <h1>{{curricular_grade}}</h1>
     <h2>{{curricular_subject}}: {{curricular_class}}</h2>
-    <h4>{% trans "Add a New" %} {% trans "Activity" %}</h4>
+    <h4>{% trans "Add a new Activity" %}</h4>
     <form method="POST">
         {% csrf_token %}
         {{form}}

@@ -298,10 +298,10 @@ def admin_enqueue_resources(request):
                     plugin_name=item.PLUGIN_NAME,
                     plugin_slug=item.PLUGIN_SLUG,
                     full_url=item.full_url,
-                    priority=1,
+                    priority=8,
                 )
                 if created:
-                    messages.success(request, _('Identifier %s has been Queued') % item.identifier_id)
+                    messages.success(request, _('Identifier %s has been Queued as PLGUIN:%s') % (item.identifier_id, item.PLUGIN_NAME))
             else:
                 messages.error(request, _('Identifier %s HAS NOT BEEN QUEUED!') % item.identifier_id)
     

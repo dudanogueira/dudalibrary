@@ -7,7 +7,7 @@ from resources.models import Resource
 from dudalibrary import utils
 
 from django.conf import settings
-from django.utils.encoding import smart_str
+from django.utils.encoding import smart_str, smart_unicode
 
 CATEGORY_DICT = {
     "audio": 9,
@@ -296,7 +296,7 @@ class Parser:
                 subprocess.call("mkdir -vp %s" % self.download_source_folder, shell=True)
                 self.download_command = u'wget -c %s "%s" -O "%s/%s"' % (unicode(self.wget_option_str), unicode(self.resource.resource_download_url), unicode(self.download_source_folder), unicode(self.filename))
             else:
-                self.download_command = u'wget -c %s "%s" -O "%s/%s"' % (self.wget_option_str, self.resource.resource_download_url, self.basetarget, str(self.filename))
+                self.download_command = u'wget -c %s "%s" -O "%s/%s"' % (smart_unicode(self.wget_option_str), smart_unicode(self.resource.resource_download_url), smart_unicode(self.basetarget), smart_unicode(self.filename))
             subprocess.call(self.download_command, shell=True)
             # if packed, unpack
             if self.packed:
