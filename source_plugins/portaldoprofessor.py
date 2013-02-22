@@ -249,7 +249,7 @@ class Parser:
             # prepare infos for download
             self.work_folder = os.path.dirname(smart_str(self.resource.content_root()))
             self.packed = False
-            self.filename = urllib.unquote(str(self.resource.resource_download_url.split('?')[0].split('/')[-1]))
+            self.filename = urllib.unquote(str(self.direct_link.split('?')[0].split('/')[-1]))
             self.filename_extension = self.filename.split(".")[-1]
             self.filename_basename = self.filename.split(".")[0]
             self.filename_basename_slugified = slugify(self.filename_basename)

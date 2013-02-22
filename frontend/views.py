@@ -344,14 +344,34 @@ def activity_details(request, object_id):
         raw_data = request.POST.get('resources_to_process', None)
         data = raw_data.splitlines()
         for line in data:
-            item = resource_identifier(line)
-            # check if item is identified
-            if item and item.identified:
-                # check if resource already exists
+            # try scenario: Resource already installed
+            try:
+                # try to identify this identifier_id
+                item = resource_identifier(line)
+                resource = Resource.objects.get(
+                    resource_reference_string=item.identifier_id
+                )
+                # get contenttype
+                contenttype = ContentType.objects.get_for_model(resource)
+                # define order
                 try:
-                    # no resource found with this identifier,
-                    # lets add to the queue 
-                    # get or create a queue item
+                    order = activity.activityitem_set.order_by('-order')[0].order + 1
+                except:
+                    order = 1
+                # create activity item with it
+                activity_item = ActivityItem.objects.create(
+                    order=order,
+                    content_type_id=contenttype.id,
+                    object_id=resource.id,
+                    activity=activity,
+                )
+                messages.success(request, u'<b>Sucesso!</b>! %s Adicionado à Atividade!' % item.identifier_id)                
+            # Resource not found. Queue it under the identifier
+            except Resource.DoesNotExist:                
+                
+                # check if item is identified
+                if item and item.identified:
+                    # get or create a Queue for this identifier
                     queue,created = ResourceQueue.objects.get_or_create(
                         identifier_id=item.identifier_id,
                         plugin_name=item.PLUGIN_NAME,
@@ -360,6 +380,7 @@ def activity_details(request, object_id):
                         full_url=item.full_url,
                         priority=1,
                     )
+                    # queue created.
                     if created:
                         # set order in activity
                         try:
@@ -378,13 +399,14 @@ def activity_details(request, object_id):
                             activity=activity,
                         )
                         messages.info(request, u'<b>%s</b> foi identificado como pertencendo ao %s e Adicionado à Lista de Downloads' % (item.identifier_id, item.SOURCE_NAME))
+                    # quue not created, already on queued
+                    # no
                     else:
                         messages.info(request, u'<b>Informação!</b>! %s Já está na Lista de Download' % item.identifier_id)                
-
-                except:
-                    raise
-            else:
-                messages.warning(request, u'<b>Atenção!</b>! %s Não identificado!' % (line))
+                # not identified. warn User
+                else:
+                    messages.warning(request, u'<b>Atenção!</b>! %s não identificado!' % item.identifier_id)                
+            
     return render_to_response('activity_details.html', locals(),
         context_instance=RequestContext(request),)
 
