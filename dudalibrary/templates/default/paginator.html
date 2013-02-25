@@ -1,16 +1,30 @@
 {% load i18n %}
 {% if page_obj.has_previous or page_obj.has_next %}
-	<div id="pagination">
-	{% for p in paginator.page_range %}
-	  {% if p == page_obj.number %}
-	    [{{ p }}]
-	  {% else %}
-		<a href="?{{querystring_nopage}}&amp;page={{ p }}">{{ p }}</a>
-	  {% endif %}
-	{% endfor %}
+<div id="pagination" class="pagination pagination-mini">
+    <ul>
+        {% if page_obj.has_previous %}
+        <li>
+            <a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">«</a>
+        </li>
+        {% endif %}
+        
+        {% for p in paginator.page_range %}    
+        {% if p == page_obj.number %}
+        <li><a>{{ p }}</a></li>
+        {% else %}
+        <li><a href="?q={{query}}&amp;page={{ p }}">{{ p }}</a></li>
+        {% endif %}      
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <li>
+            <a href="?q={{ query }}&amp;page={{ page.next_page_number }}">»</a>
+        </li>
+        {% endif %}
+        
+    </ul>
 	
-	<p>{% blocktrans with in_page_total_count=page_obj.object_list|length total_count=paginator.count %}{{in_page_total_count}} results on this page out of {{total_count}} resources found.{% endblocktrans %}</p>
-	</div>
+    <p>{% blocktrans with in_page_total_count=page_obj.object_list|length total_count=paginator.count %}{{in_page_total_count}} results on this page out of {{total_count}} resources found.{% endblocktrans %}</p>
+</div>
 	
 {% endif %}
 

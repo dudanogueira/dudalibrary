@@ -9,9 +9,15 @@ class ResourceIndex(indexes.SearchIndex):
     description = indexes.CharField(model_attr='description')
     objectives = indexes.CharField(model_attr='objective')
     author = indexes.CharField(model_attr='author')
+    suggestions = indexes.FacetCharField()
     
     def get_model(self):
             return Resource
+    
+    def prepare(self, obj):
+            prepared_data = super(ResourceIndex, self).prepare(obj)
+            prepared_data['suggestions'] = prepared_data['text']
+            return prepared_data
     
     
     def index_queryset(self):

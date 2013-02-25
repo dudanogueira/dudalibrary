@@ -12,6 +12,8 @@ urlpatterns = patterns('',
         name='admin_enqueue_resources'),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
+    (r'^accounts/login/$', 'django.contrib.auth.views.login',),
+    
 )
 
 from django.conf.urls.defaults import patterns, include, url
@@ -45,8 +47,13 @@ urlpatterns += i18n_patterns('',
     url(_(r'^curricular/(?P<object_id>\d+)/'), 'frontend.views.get_curricular_grade', name="curricular_grade"),
     url(_(r'^resource/tag/(?P<pk>[^/]+)/$'), 'frontend.views.tag_details', name="tag_details"),
     url(_(r'^resource/(?P<object_id>\d+)/'), 'frontend.views.resource_details', name="resource_details"),
-    url(_(r'^search/'), include('haystack.urls')),
 )
+
+use_haystack = getattr(settings, 'USE_HAYSTACK', False)
+if use_haystack:
+    urlpatterns += patterns('',
+        url(r'^search/', include('haystack.urls'))
+    )
 
 if settings.DEBUG:
     urlpatterns += patterns('',

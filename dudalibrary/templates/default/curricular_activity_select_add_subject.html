@@ -12,13 +12,15 @@
         {% endfor %}
         </ul>
     {%endif %}
-    
+
+    {% if request.user and perms.curricular.add_subjectclass %}
     <h4>{% trans "Add a new Subject Class" %}</h4>
     <form method="POST">
         {% csrf_token %}
         {{form}}
         <p><input type="submit" class="btn btn-success" value="{% trans "Add" %}"></p>
     </form>
+    {% endif %}
 </div>
 
 {% endblock %}

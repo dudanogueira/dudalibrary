@@ -78,6 +78,15 @@ class ActivityItem(models.Model):
 
 class Activity(models.Model):
     
+    @models.permalink
+    def get_absolute_url(self):
+        return ('activity_details', (), 
+            {
+            'object_id': str(self.id),
+            }
+        )
+    
+    
     def __unicode__(self):
         return u'%s' % self.title
     

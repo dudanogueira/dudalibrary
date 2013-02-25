@@ -222,15 +222,15 @@ def resource_identifier(url, plugin_slug=None, request=None):
                     print "FULL URL: %s" % parser.full_url
                     parser.plugin_slug = plugin_slug
                     return parser
-                    
             
             except urllib2.URLError:
                 parser.has_internet = False
+                parser.parsed = False
                 print "NO INTERNET"
 
             except:
+                parser.parsed = False
                 print "Could not load %s" % parser.PLUGIN_NAME
-                raise
                 
     except:
         raise

@@ -49,25 +49,25 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="#">Duda Library</a>
-          <div class="nav-collapse collapse">
-            <p class="navbar-text pull-right">
-
-			{% if request.user.is_authenticated %}
-				{% trans "logged in as" %}: {{request.user}} [<a class="navbar-link" href="{% url auth_logout %}?next={% url index %}">{% trans "logout" %}</a>]
-			{% else %}
-				{% trans "not logged in" %}
-			{% endif %}
+          <a class="brand" href="{% url index %}">Duda Library</a>
+          <ul class="nav">
+            <li class="active"><a href="{% url index %}">Home</a></li>
+          </ul>
+          
+          <form class="navbar-search pull-right form-search form-inline" action="{% url haystack_search %}" method="get">
+              <input type="text" name="q" class="search-query span2" placeholder="{% trans "Search" %}">
+              <input type="submit" class='btn btn-small' value="{% trans "Go" %}">
+          </form>
+          <p class="nav-text pull-right">
+              {% if request.user.is_authenticated %}
+              <a href="{% url auth_logout %}?next={% url index %}" role="button" class="btn btn-warning" data-toggle="modal"><i class="icon icon-arrow-left icon-white"></i> {% trans "Log out" %}: {{request.user}}</a>
+              {% else %}
+                  <a href="#ModalLogin" role="button" class="btn btn-info" data-toggle="modal"><i class="icon icon-arrow-right icon-white"></i> {% trans "Log in" %}</a>
               
-              
-            </p>
-            <ul class="nav">
-              <!---<li class="active"><a href="#">Home</a></li>
-              <li><a href="#about">About</a></li>
-              <li><a href="#contact">Contact</a></li>
-              -->
-            </ul>
-          </div><!--/.nav-collapse -->
+              {% endif %}
+          </p>  
+          
+          
         </div>
       </div>
     </div>
@@ -109,7 +109,34 @@
 
       <footer>
         <p><a href="http://dudalibrary.org">{% trans "Powered by Duda Library"%}</a> {{now}}</p>
+        {% include "languages.html" %}
       </footer>
+      
+      
+      <!-- Modal -->      
+      <div id="ModalLogin" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="ModalLoginLabel" aria-hidden="true">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 id="ModalLoginLabel">{% trans "Log in Duda Library" %}</h3>
+        </div>
+        <div class="modal-body">
+            
+        	<form id="login-form" method="post" action="{% url django.contrib.auth.views.login %}" style="text-align: center;">
+        		<input type="hidden" name="next" value="/">
+        		{% csrf_token %}
+        		<p><label for="id_username">{% trans "Username" %}:</label> <input id="id_username" type="text" name="username" maxlength="30" /></p>
+        <p><label for="id_password">{% trans "Password" %}:</label> <input type="password" name="password" id="id_password" /></p>
+        			<p><input type="submit" class="btn btn-primary" id="login-form-submit" value="{% trans "Log in" %}" /></p>
+        		</span>
+        	</form>
+            
+            
+        </div>
+        <div class="modal-footer">
+          <button class="btn" data-dismiss="modal" aria-hidden="true">{% trans "Close" %}</button>
+        </div>
+      </div
+      
 
     </div><!--/.fluid-container-->
 

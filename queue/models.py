@@ -34,13 +34,16 @@ class ResourceQueue(models.Model):
                     parsed.parse()
                     parsed.index()
                     parsed.download()
-                    parsed.resource.generate_thumb()
-                    activity_queued_item_delivery(self, parsed.resource)
-                    self.status = "done"
+                    if parsed.resource:
+                        parsed.resource.generate_thumb()
+                        activity_queued_item_delivery(self, parsed.resource)
+                        self.status = "done"
+                    else:
+                        self.status = 'error'
                     self.save()
                     return parsed
                 except:
-                    raise
+                    #raise
                     self.status = 'error'
                     # increase tries TODO
                     # self.tries += 1

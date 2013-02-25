@@ -12,7 +12,7 @@
             {% for class in curricular_grade.subjectclass_set.all %}
             <li class="{% if forloop.first %}active{%endif%}"><a href="#class-{{class.id}}" data-toggle="tab">{{class}}</a></li>
             {% endfor %}
-            {% if request.user.is_staff %}
+            {% if request.user and perms.curricular.add_subjectclass %}
             <li><a href="#add-class" data-toggle="tab">{% trans "Add Class" %}</a>
             {% endif %}
         </ul>
@@ -31,7 +31,7 @@
       				</ul>
                 {% endif %}
       			{% endfor %}
-                {% if request.user.is_staff %}
+                {% if request.user and perms.curricular.add_activity %}
                 <hr />
                     <a class="btn btn-success" href="{% url curricular_activity_select_add_subject curricular_grade.id class.id %}"><i class="icon-white icon-plus"></i> {% trans "Add Activities" %}</a>
                 {% endif %}

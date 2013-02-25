@@ -57,6 +57,7 @@ class Parser(object):
         '''
         # define infos for testing
         # test 1234@source.org
+        self.identified = False
         self.url = url
         if self.url.find('@') != -1:
             bits = url.split('@')
@@ -139,40 +140,41 @@ class Parser(object):
             print "ERROR. Not parsed"
     
     def download(self, download_method=None):
-        if not download_method:
-            download_method = getattr(settings, 'YOUTUBE_DOWNLOAD_METHOD', None)
-        if download_method == 'youtube_downloader' or None:
-            print "METHOD: %s" % download_method
-            # check files, paths, thumbnails, etc
-            yt = youtube_downloader.YouTube()
-            yt.url = self.full_url
-            video = yt.filter("mp4")[0]
-            video.filename = self.reference_id + '.mp4'
-            # create folder
-            work_folder = os.path.dirname(smart_str(self.resource.content_root()))
-            subprocess.call("mkdir -vp %s" % work_folder, shell=True)
-            # download
-            video.download(self.resource.content_root_path())
-            #reload(youtube)
-            self.resource.trigger = video.filename
-            self.resource.enabled = True
-            self.resource.size = utils.folder_size(self.resource.content_root_path())
-            self.resource.check_files()
-            self.resource.generate_thumb()
-        elif download_method == 'youtube-dl':
-            print "METHOD: %s" % download_method
-            dlcmd = 'python %s/youtube-dl.py -c --write-info-json --write-description -f 18 %s' % (settings.INSTANCE(), self.full_url)
-            print "COMMAND: %s" % dlcmd
-            self.resource.create_content_root()
-            os.chdir(self.resource.content_root_path())
-            try:
-                p = subprocess.call(dlcmd, shell=True)
-                self.resource.status = "installed"
+        if self.parsed:
+            if not download_method:
+                download_method = getattr(settings, 'YOUTUBE_DOWNLOAD_METHOD', None)
+            if download_method == 'youtube_downloader' or None:
+                print "METHOD: %s" % download_method
+                # check files, paths, thumbnails, etc
+                yt = youtube_downloader.YouTube()
+                yt.url = self.full_url
+                video = yt.filter("mp4")[0]
+                video.filename = self.reference_id + '.mp4'
+                # create folder
+                work_folder = os.path.dirname(smart_str(self.resource.content_root()))
+                subprocess.call("mkdir -vp %s" % work_folder, shell=True)
+                # download
+                video.download(self.resource.content_root_path())
+                #reload(youtube)
+                self.resource.trigger = video.filename
                 self.resource.enabled = True
-                self.resource.trigger = "%s.%s" % (self.reference_id, "mp4")
-            except:
-                self.resource.enabled = False
-                self.resource.status = "error"
+                self.resource.size = utils.folder_size(self.resource.content_root_path())
+                self.resource.check_files()
+                self.resource.generate_thumb()
+            elif download_method == 'youtube-dl':
+                print "METHOD: %s" % download_method
+                dlcmd = 'python %s/youtube-dl.py -c --write-info-json --write-description -f 18 %s' % (settings.INSTANCE(), self.full_url)
+                print "COMMAND: %s" % dlcmd
+                self.resource.create_content_root()
+                os.chdir(self.resource.content_root_path())
+                try:
+                    p = subprocess.call(dlcmd, shell=True)
+                    self.resource.status = "installed"
+                    self.resource.enabled = True
+                    self.resource.trigger = "%s.%s" % (self.reference_id, "mp4")
+                except:
+                    self.resource.enabled = False
+                    self.resource.status = "error"
             
 
             

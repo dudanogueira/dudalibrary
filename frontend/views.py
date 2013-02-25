@@ -348,24 +348,29 @@ def activity_details(request, object_id):
             try:
                 # try to identify this identifier_id
                 item = resource_identifier(line)
-                resource = Resource.objects.get(
-                    resource_reference_string=item.identifier_id
-                )
-                # get contenttype
-                contenttype = ContentType.objects.get_for_model(resource)
-                # define order
-                try:
-                    order = activity.activityitem_set.order_by('-order')[0].order + 1
-                except:
-                    order = 1
-                # create activity item with it
-                activity_item = ActivityItem.objects.create(
-                    order=order,
-                    content_type_id=contenttype.id,
-                    object_id=resource.id,
-                    activity=activity,
-                )
-                messages.success(request, u'<b>Sucesso!</b>! %s Adicionado à Atividade!' % item.identifier_id)                
+                if item:
+                    resource = Resource.objects.get(
+                        resource_reference_string=item.identifier_id
+                    )
+                    # get contenttype
+                    contenttype = ContentType.objects.get_for_model(resource)
+                    # define order
+                    try:
+                        order = activity.activityitem_set.order_by('-order')[0].order + 1
+                    except:
+                        order = 1
+                    # create activity item with it
+                    activity_item = ActivityItem.objects.create(
+                        order=order,
+                        content_type_id=contenttype.id,
+                        object_id=resource.id,
+                        activity=activity,
+                    )
+                    messages.success(request, u'<b>Sucesso!</b>! %s Adicionado à Atividade!' % item.identifier_id)                
+                else:
+                    messages.warning(request, u'<b>Atenção!</b>! %s não identificado em nenhum plugin!' % line)                
+                    
+                    
             # Resource not found. Queue it under the identifier
             except Resource.DoesNotExist:                
                 
