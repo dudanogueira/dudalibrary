@@ -28,7 +28,7 @@ admin.autodiscover()
 
 urlpatterns += patterns('',
     url(r'^$', 'frontend.views.index', name='index'),
-    url(r'^i18n/', include('django.conf.urls.i18n')),    
+    url(r'^i18n/', 'frontend.views.set_language', name='set_language'),    
     (r'^ratings/', include('ratings.urls')),
     url(r'^logout/$',
         'django.contrib.auth.views.logout',

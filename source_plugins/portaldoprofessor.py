@@ -258,7 +258,7 @@ class Parser:
             self.DOWNLOAD_LIMIT_RATE = getattr(settings, 'DOWNLOAD_LIMIT_RATE', None)
             if self.DOWNLOAD_LIMIT_RATE:
                 self.wget_option_str = "--limit-rate=%s" % self.DOWNLOAD_LIMIT_RATE
-            if 'zip' in self.filename_basename_slugified or 'rar' in self.filename_basename_slugified:
+            if self.filename_extension in ['rar', 'zip']:
                 self.packed = True
                 self.download_source_folder = "%s/downloaded_source" % self.work_folder
                 self.download_command = u'wget -c %s "%s" -O "%s/%s.%s"' % \
@@ -321,12 +321,12 @@ class Parser:
             subprocess.call(self.download_command, shell=True)
             # if packed, unpack
             if self.packed:
-                if 'zip' in self.filename_basename_slugified:
+                if 'zip' == self.filename_extension:
                     if utils.find_program_path('unzip'):
                         self.unpack_command = "unzip -o '%s/%s' -d %s" % (self.download_source_folder, self.filename_basename_slugified, self.work_folder)
                     else:
                         print "No Unzip tools found (unzip)"
-                elif 'rar' in self.filename_basename_slugified:
+                elif 'rar' == self.filename_extension:
                     if utils.find_program_path('unrar'):
                         self.unpack_command = "unrar e -o+ '%s/%s' %s" % (self.download_source_folder, self.filename_basename_slugified, self.work_folder)
                     elif utils.find_program_path('rar'):
@@ -335,9 +335,13 @@ class Parser:
                         print "No Rar tools found (rar nor unrar)"
                 #unpack, keeping the pack for reference
                 subprocess.call(self.unpack_command, shell=True)
+                # update trigger
+                self.resource.trigger = self.trigger
+
             # check files, paths, thumbnails, etc
             self.resource.check_files()
             self.resource.generate_thumb()
+            self.resource.save()
 
             
             

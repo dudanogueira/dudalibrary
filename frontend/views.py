@@ -3,11 +3,17 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import resolve, reverse
 from django.http import QueryDict
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 
 from dudalibrary import utils
+#i18n
+from urlparse import urlparse
+from django import http
+from django.utils import translation
+from django.utils.translation import check_for_language
+
 
 from django.template import RequestContext, loader, Context
 from django.views.generic import ListView, DetailView
@@ -477,3 +483,36 @@ def get_curricular_grade(request, object_id):
             
     return render_to_response('curricular_grade_details.html', locals(),
         context_instance=RequestContext(request),)
+
+
+def set_language(request):
+    next = request.REQUEST.get('next', None)
+    if not next:
+        next = '/'
+
+    url = urlparse(next)
+
+    try:
+        r = resolve(url.path)
+    except:
+        next = '/'
+
+    response = http.HttpResponseRedirect(next)
+    lang_code = request.GET.get('language', None)
+
+    if lang_code and check_for_language(lang_code):
+        translation.activate(lang_code)
+        try:
+            next = reverse('%s' % r.url_name, args=r.args, kwargs=r.kwargs)
+        except:
+            pass
+        else:
+            response = http.HttpResponseRedirect(next)
+        translation.deactivate()
+
+        if hasattr(request, 'session'):
+            request.session['django_language'] = lang_code
+        else:
+            response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang_code)
+
+    return response

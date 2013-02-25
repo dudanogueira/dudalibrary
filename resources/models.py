@@ -325,18 +325,18 @@ class Resource(models.Model):
                 self.status = 'installed'
                 self.save()
                 return True
-            #maybe its only a file, same as downloaded
-            dlfile = "%s/%s" % (self.content_root_path(), self.resource_downloaded_file)
-            if os.path.isfile(dlfile) == True:
-                self.trigger = self.resource_downloaded_file
-                self.save()
-                return True
             # lets search...
             for file_item in self.content_file_list():
                 if urllib2.unquote(self.trigger) in file_item:
                     self.trigger = file_item.replace(self.content_root_path(), "")
                     self.save()
                     return True
+            #maybe its only a file, same as downloaded
+            dlfile = "%s/%s" % (self.content_root_path(), self.resource_downloaded_file)
+            if os.path.isfile(dlfile) == True:
+                self.trigger = self.resource_downloaded_file
+                self.save()
+                return True
             # what about one file with same exension?
             findings = []
             for file_item in self.content_file_list():

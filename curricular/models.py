@@ -20,7 +20,7 @@ class CurricularGrade(models.Model):
             return u'%s - %s' % (self.parent, self.title)
 
     parent = models.ForeignKey('self', blank=True, null=True, limit_choices_to = {'parent': None})
-    title = models.CharField(blank=True, null=True, max_length=100)
+    title = models.CharField(blank=False, null=False, max_length=100)
     description = models.TextField(blank=True)
     user = models.ForeignKey(User, blank=True, null=True)
     # metadata information
@@ -34,7 +34,7 @@ class SubjectClass(models.Model):
         return u'%s' % self.title
     
     curricular_grade = models.ForeignKey(CurricularGrade)
-    title = models.CharField(_("Title"), blank=True, null=True, max_length=100)
+    title = models.CharField(_("Title"), blank=False, null=False, max_length=100)
     description = models.TextField(_("Description"), blank=True)
     # metadata information
     created = models.DateTimeField(blank=True, default=datetime.datetime.now, auto_now_add=True)
@@ -49,7 +49,7 @@ class Subject(models.Model):
     class Meta:
         ordering = ['title']
 
-    title = models.CharField(blank=True, max_length=100)
+    title = models.CharField(blank=False, null=False, max_length=100)
     subject_class = models.ForeignKey(SubjectClass)
     description = models.TextField(blank=True)
     # metadata information
@@ -99,7 +99,6 @@ class Activity(models.Model):
     # metadata information
     created = models.DateTimeField(blank=True, default=datetime.datetime.now, auto_now_add=True)
     updated = models.DateTimeField(blank=True, default=datetime.datetime.now, auto_now=True)
-
 
 class Exercise(models.Model):
     

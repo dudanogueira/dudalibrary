@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block content %}
+
 <div id="browse-curricular">
 	
     <div id="show-activity">
@@ -21,6 +22,8 @@
                 {% for class in curricular_grade.subjectclass_set.all %}
                 <div class="tab-pane {% if forloop.first %}active{%endif%}" id="class-{{class.id}}">
                     <p>{{class.description}}</p>
+                    <h3>{{class}}</h3>
+                    <hr />
                     {% for subject in class.subject_set.all %}
                         <h4><strong>{{subject}}</strong></h4>
                         <ul>
