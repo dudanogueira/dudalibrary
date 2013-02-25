@@ -16,9 +16,12 @@ class ActivityItemAdmin(admin.ModelAdmin):
 class SubjectAdmin(admin.ModelAdmin):
     list_display = 'title', 'subject_class'
     list_filter = 'subject_class',
+
+class SubjectClassAdmin(admin.ModelAdmin):
+    list_display = 'title', 'curricular_grade'
     
 admin.site.register(CurricularGrade, CurricularGradeAdmin)
-admin.site.register(SubjectClass)
+admin.site.register(SubjectClass, SubjectClassAdmin)
 admin.site.register(Subject, SubjectAdmin)
 admin.site.register(Activity, ActivityAdmin)
 admin.site.register(ActivityItem, ActivityItemAdmin)

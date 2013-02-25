@@ -83,14 +83,17 @@ class AddCurricularClassForm(forms.ModelForm):
         fields = ('title', 'description')
 
 class AddSubjectClassForm(forms.ModelForm):
+    
     class Meta:
         model = SubjectClass
         fields = ('title', 'description')
 
 class AddSubjectForm(forms.ModelForm):
+    add_new = forms.BooleanField(required=False, initial=True, label=_("Add new subject after adding this one."))
+    
     class Meta:
         model = Subject
-        fields = ('title', 'description')
+        fields = ('title', 'description', 'add_new')
 
 class AddActivityForm(forms.ModelForm):
     class Meta:
@@ -437,7 +440,7 @@ def curricular_activity_select_add_subject(request, curricular_id, class_id):
     curricular_grade = get_object_or_404(CurricularGrade, id=curricular_id)
     curricular_class = get_object_or_404(SubjectClass, id=class_id)
     subjects = Subject.objects.filter(subject_class=curricular_class)
-    form = AddSubjectClassForm()
+    form = AddSubjectForm()
     if request.POST:
         form = AddSubjectForm(request.POST)
         if form.is_valid():
@@ -445,7 +448,11 @@ def curricular_activity_select_add_subject(request, curricular_id, class_id):
             new_subject.curricular_grade = curricular_grade
             new_subject.subject_class = curricular_class
             new_subject.save()
-            return redirect(reverse('curricular_add_activity', args=[curricular_grade.id, curricular_class.id, new_subject.id]))
+            if form.cleaned_data['add_new']:
+                return redirect(reverse('curricular_activity_select_add_subject', args=[curricular_grade.id, curricular_class.id]))
+            else:
+                return redirect(reverse('curricular_add_activity', args=[curricular_grade.id, curricular_class.id, new_subject.id]))
+                
 
     return render_to_response('curricular_activity_select_add_subject.html', locals(),
         context_instance=RequestContext(request),)
