@@ -3,8 +3,8 @@
 {% block content %}
 <div id="browse-curricular">
 	
-	<div id="show-activity">
-		<h1>{{curricular_grade}}</h1>
+    <div id="show-activity">
+        <h1>{{curricular_grade}}</h1>
         
         {% if curricular_grade.parent %}
         
@@ -14,59 +14,62 @@
             {% endfor %}
             {% if request.user and perms.curricular.add_subjectclass %}
             <li><a href="#add-class" data-toggle="tab">{% trans "Add Class" %}</a>
-            {% endif %}
-        </ul>
- 
-        <div class="tab-content">
-            {% for class in curricular_grade.subjectclass_set.all %}
-            <div class="tab-pane {% if forloop.first %}active{%endif%}" id="class-{{class.id}}">
-                <p>{{class.description}}</p>
-      			{% for subject in class.subject_set.all %}
-                {% if subject.activity_set.all %}
-      				<h4><strong>{{subject}}</strong></h4>
-      				<ul>
-      				{% for activity in subject.activity_set.all %}
-      					<li><a href="{% url activity_details activity.id %}">{{activity}}{% if activity.description %} - {{activity.description}}{%endif%}</a></li>
-      				{% endfor %}
-      				</ul>
                 {% endif %}
-      			{% endfor %}
-                {% if request.user and perms.curricular.add_activity %}
-                <hr />
+            </ul>
+ 
+            <div class="tab-content">
+                {% for class in curricular_grade.subjectclass_set.all %}
+                <div class="tab-pane {% if forloop.first %}active{%endif%}" id="class-{{class.id}}">
+                    <p>{{class.description}}</p>
+                    {% for subject in class.subject_set.all %}
+                        <h4><strong>{{subject}}</strong></h4>
+                        <ul>
+                            {% for activity in subject.activity_set.all %}
+                            <li><a href="{% url activity_details activity.id %}">{{activity}}{% if activity.description %} - {{activity.description}}{%endif%}</a></li>
+                            {% endfor %}
+                            {% if request.user and perms.curricular.add_activity %}                           <a href="{% url curricular_add_activity curricular_grade.id class.id subject.id %}" class="btn btn-info"><i class="icon icon-plus icon-white"></i> {% blocktrans %}Add Activity at {{subject}} Subject{% endblocktrans %}</a>
+                            {% endif %}
+
+                        </ul>
+                        <hr />    
+                    {% endfor %}
+
+                    {% if request.user and perms.curricular.add_activity %}
+                    <hr />
                     <a class="btn btn-success" href="{% url curricular_activity_select_add_subject curricular_grade.id class.id %}"><i class="icon-white icon-plus"></i> {% trans "Add Activities" %}</a>
-                {% endif %}
+                    {% endif %}
+                </div>
+                {% endfor %}
+                <div class="tab-pane" id="add-class">
+                    <h2>{% trans "Add a new Class" %}</h2>
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{add_curricular_class_form}}
+                        <p><input type="submit" class="btn btn-success" value="{% trans 'Add' %}"></p>
+                    </form>
+                </div>
             </div>
-            {% endfor %}
-            <div class="tab-pane" id="add-class">
-                <h2>{% trans "Add a new Class" %}</h2>
-                <form method="POST">
-                    {% csrf_token %}
-                    {{add_curricular_class_form}}
-                    <p><input type="submit" class="btn btn-success" value="{% trans 'Add' %}"></p>
-                </form>
-            </div>
-        </div>
  
-        <script>
-          $(function () {
-            $('#myTab a:first').tab('show');
-          })
-          $('#myTab a').click(function (e) {
-            e.preventDefault();
-            $(this).tab('show');
-          })
-        </script>
+            <script>
+                $(function () {
+                    $('#myTab a:first').tab('show');
+                })
+                $('#myTab a').click(function (e) {
+                    e.preventDefault();
+                    $(this).tab('show');
+                })
+            </script>
 
-        {% else %}
-        <ul>
-        {% for curricular_child in curricular_grade.curriculargrade_set.all %}
-            <li><a href="{% url curricular_grade curricular_child.id %}">{{curricular_child}}</a></li>
-        {% endfor %}
-        </ul>
+            {% else %}
+            <ul>
+                {% for curricular_child in curricular_grade.curriculargrade_set.all %}
+                <li><a href="{% url curricular_grade curricular_child.id %}">{{curricular_child}}</a></li>
+                {% endfor %}
+            </ul>
         
-        {% endif %}
+            {% endif %}
 
-	</div>
-</div>
+        </div>
+    </div>
 
-{% endblock %}
+    {% endblock %}

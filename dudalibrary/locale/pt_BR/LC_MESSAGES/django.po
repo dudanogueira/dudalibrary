@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-21 22:27-0300\n"
+"POT-Creation-Date: 2013-02-25 00:47-0300\n"
 "PO-Revision-Date: 2012-02-03 08:24-0600\n"
 "Last-Translator: Duda Nogueira <dudanogueira@gmail.com>\n"
 "Language-Team: Portugues <pt_BR-language@dudalibrary.org>\n"
@@ -16,108 +16,104 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: curricular/models.py:35 resources/models.py:49
+#: curricular/models.py:40 resources/models.py:49
 msgid "Title"
 msgstr "Título"
 
-#: curricular/models.py:36
+#: curricular/models.py:41
 #: dudalibrary/templates/default/resource_details.html:59
 #: dudalibrary/templates/default/resources_object_list.html:44
-#: dudalibrary/templates/default/search/search.html:47
+#: dudalibrary/templates/default/search/search.html:44
 msgid "Description"
 msgstr "Descrição"
 
-#: dudalibrary/settings.py:61
+#: dudalibrary/settings.py:69
 msgid "Portuguese"
 msgstr "Português"
 
-#: dudalibrary/settings.py:62
+#: dudalibrary/settings.py:70
 msgid "English"
 msgstr "Inglês"
 
-#: dudalibrary/settings.py:63
+#: dudalibrary/settings.py:71
 msgid "Spanish"
 msgstr "Espanhol"
 
-#: dudalibrary/settings.py:64
+#: dudalibrary/settings.py:72
 msgid "French"
 msgstr "Francês"
 
-#: dudalibrary/settings.py:65
+#: dudalibrary/settings.py:73
 msgid "Galician"
 msgstr "Galiciano"
 
-#: dudalibrary/settings.py:66
+#: dudalibrary/settings.py:74
 msgid "German"
 msgstr "Alemão"
 
-#: dudalibrary/settings.py:67
+#: dudalibrary/settings.py:75
 msgid "Italian"
 msgstr "Italiano"
 
-#: dudalibrary/settings.py:68
+#: dudalibrary/settings.py:76
 msgid "Chinese"
 msgstr "Chinês"
 
-#: dudalibrary/settings.py:69
+#: dudalibrary/settings.py:77
 msgid "Catalan"
 msgstr "Catalão"
 
-#: dudalibrary/settings.py:70
+#: dudalibrary/settings.py:78
 msgid "Latim"
 msgstr "Latim"
 
-#: dudalibrary/settings.py:71
+#: dudalibrary/settings.py:79
 msgid "Esperanto"
 msgstr "Esperanto"
 
-#: dudalibrary/settings.py:72
+#: dudalibrary/settings.py:80
 msgid "Non Applicable"
 msgstr "Não Aplicável"
 
-#: dudalibrary/urls.py:39
+#: dudalibrary/urls.py:41
 msgid "^random/$"
 msgstr "aleatorio/$"
 
-#: dudalibrary/urls.py:40
+#: dudalibrary/urls.py:42
 msgid "^most/viewed"
 msgstr "^mais/vistos"
 
-#: dudalibrary/urls.py:41
+#: dudalibrary/urls.py:43
 msgid "^most/voted"
 msgstr "^mais/votados"
 
-#: dudalibrary/urls.py:42
+#: dudalibrary/urls.py:44
 msgid "^activity/(?P<object_id>\\d+)/$"
 msgstr "^atividade/(?P<object_id>\\d+)/$"
 
-#: dudalibrary/urls.py:43
+#: dudalibrary/urls.py:45
 msgid ""
 "^curricular/(?P<curricular_id>\\d+)/class/(?P<class_id>\\d+)/activity/"
 "select_subject/"
 msgstr ""
 
-#: dudalibrary/urls.py:44
+#: dudalibrary/urls.py:46
 msgid ""
 "^curricular/(?P<curricular_id>\\d+)/class/(?P<class_id>\\d+)/subject/(?"
 "P<subject_id>\\d+)/activity/add/"
 msgstr ""
 
-#: dudalibrary/urls.py:45
+#: dudalibrary/urls.py:47
 msgid "^curricular/(?P<object_id>\\d+)/"
 msgstr "^curriculo/(?P<object_id>\\d+)/"
 
-#: dudalibrary/urls.py:46
+#: dudalibrary/urls.py:48
 msgid "^resource/tag/(?P<pk>[^/]+)/$"
 msgstr "^recurso/tag/(?P<pk>[^/]+)/$"
 
-#: dudalibrary/urls.py:47
+#: dudalibrary/urls.py:49
 msgid "^resource/(?P<object_id>\\d+)/"
 msgstr "^recurso/(?P<object_id>\\d+)/"
-
-#: dudalibrary/urls.py:48
-msgid "^search/"
-msgstr "^buscar/"
 
 #: dudalibrary/templates/default/activity_details.html:18
 #: dudalibrary/templates/default/activity_details.html:37
@@ -147,15 +143,15 @@ msgstr "Acessar este Recurso"
 msgid "There are no resources to show"
 msgstr "Nenhum recurso para mostrar."
 
-#: dudalibrary/templates/default/activity_details.html:66
+#: dudalibrary/templates/default/activity_details.html:65
 msgid "Activity Manager"
 msgstr "Gestão de Atividades"
 
-#: dudalibrary/templates/default/activity_details.html:69
+#: dudalibrary/templates/default/activity_details.html:68
 msgid "Add Resource"
 msgstr "Adicionar Recurso"
 
-#: dudalibrary/templates/default/activity_details.html:77
+#: dudalibrary/templates/default/activity_details.html:76
 msgid "Type the URLs here, one per line"
 msgstr "Digite as URLs aqui, uma por linha"
 
@@ -175,11 +171,11 @@ msgstr "Adicionar um Recurso Customizado"
 
 #: dudalibrary/templates/default/add_custom_resource.html:12
 msgid "Current Site Domain"
-msgstr ""
+msgstr "Domínio Atual"
 
 #: dudalibrary/templates/default/add_custom_resource.html:13
 msgid "Your content will be identified as"
-msgstr ""
+msgstr "Seu conteúdo será identificado como"
 
 #: dudalibrary/templates/default/add_custom_resource.html:17
 #: dudalibrary/templates/default/admin/admin_enqueue_resources.html:15
@@ -187,20 +183,26 @@ msgstr ""
 msgid "Add Custom Content"
 msgstr "Adicionar um Recurso Customizado"
 
-#: dudalibrary/templates/default/base.html:57
-#: dudalibrary/templates/default/base_old.html:25
-msgid "logged in as"
-msgstr "logado como"
-
-#: dudalibrary/templates/default/base.html:57
-#: dudalibrary/templates/default/base_old.html:25
-msgid "logout"
-msgstr "sair"
+#: dudalibrary/templates/default/base.html:58
+#: dudalibrary/templates/default/sidebar.html:8
+#: dudalibrary/templates/default/search/search.html:9
+msgid "Search"
+msgstr "Buscar"
 
 #: dudalibrary/templates/default/base.html:59
-#: dudalibrary/templates/default/base_old.html:27
-msgid "not logged in"
-msgstr "não logado"
+#: dudalibrary/templates/default/languages.html:13
+#: dudalibrary/templates/default/sidebar.html:11
+msgid "Go"
+msgstr "Ir"
+
+#: dudalibrary/templates/default/base.html:63
+msgid "Log out"
+msgstr "Sair"
+
+#: dudalibrary/templates/default/base.html:65
+#: dudalibrary/templates/default/base.html:129
+msgid "Log in"
+msgstr "Entrar"
 
 #: dudalibrary/templates/default/base.html:81
 msgid "tons of educational resources"
@@ -210,9 +212,37 @@ msgstr "toneladas de recursos educacionais"
 msgid "Powered by Duda Library"
 msgstr "Duda Library"
 
+#: dudalibrary/templates/default/base.html:120
+msgid "Log in Duda Library"
+msgstr "Entrar no Duda Library"
+
+#: dudalibrary/templates/default/base.html:127
+msgid "Username"
+msgstr "Usuário"
+
+#: dudalibrary/templates/default/base.html:128
+msgid "Password"
+msgstr "Senha"
+
+#: dudalibrary/templates/default/base.html:136
+msgid "Close"
+msgstr "Fechar"
+
 #: dudalibrary/templates/default/base_old.html:8
 msgid "Duda Library - Tons of Education"
 msgstr "Duda Library - Uma tonelada de Educação"
+
+#: dudalibrary/templates/default/base_old.html:25
+msgid "logged in as"
+msgstr "logado como"
+
+#: dudalibrary/templates/default/base_old.html:25
+msgid "logout"
+msgstr "sair"
+
+#: dudalibrary/templates/default/base_old.html:27
+msgid "not logged in"
+msgstr "não logado"
 
 #: dudalibrary/templates/default/base_old.html:47
 msgid "tons of open educational resources"
@@ -227,16 +257,16 @@ msgid "Latest Additions"
 msgstr "Últimas Adições"
 
 #: dudalibrary/templates/default/browse.html:20
-#: dudalibrary/templates/default/browse.html:41
+#: dudalibrary/templates/default/browse.html:42
 #: dudalibrary/templates/default/tophit_list_items.html:11
 msgid "see the entire list  &raquo;"
 msgstr "ver a lista completa  &raquo;"
 
-#: dudalibrary/templates/default/browse.html:37
+#: dudalibrary/templates/default/browse.html:38
 msgid "Top Rated"
 msgstr "Mais votados"
 
-#: dudalibrary/templates/default/browse.html:54
+#: dudalibrary/templates/default/browse.html:55
 msgid "Tag Cloud"
 msgstr "Nuvem de Tags"
 
@@ -245,15 +275,15 @@ msgstr "Nuvem de Tags"
 msgid "Use an existing Subject Class"
 msgstr "Usar uma Matéria existente"
 
-#: dudalibrary/templates/default/curricular_activity_select_add_subject.html:16
+#: dudalibrary/templates/default/curricular_activity_select_add_subject.html:17
 msgid "Add a new Subject Class"
 msgstr "Adicionar uma nova Matéria"
 
-#: dudalibrary/templates/default/curricular_activity_select_add_subject.html:20
+#: dudalibrary/templates/default/curricular_activity_select_add_subject.html:21
 #: dudalibrary/templates/default/curricular_add_activity.html:11
 #: dudalibrary/templates/default/curricular_grade_add_activity.html:13
 #: dudalibrary/templates/default/curricular_grade_add_activity.html:29
-#: dudalibrary/templates/default/curricular_grade_details.html:45
+#: dudalibrary/templates/default/curricular_grade_details.html:48
 msgid "Add"
 msgstr "Adicionar"
 
@@ -275,15 +305,20 @@ msgstr "Adicionar nova Matéria"
 
 #: dudalibrary/templates/default/curricular_grade_details.html:16
 msgid "Add Class"
-msgstr "Adicionar Classe"
+msgstr "Adicionar Série"
 
-#: dudalibrary/templates/default/curricular_grade_details.html:36
+#: dudalibrary/templates/default/curricular_grade_details.html:30
+#, python-format
+msgid "Add Activity at %(subject)s Subject"
+msgstr "Adicionar atividade na Matéria %(subject)s"
+
+#: dudalibrary/templates/default/curricular_grade_details.html:39
 msgid "Add Activities"
-msgstr ""
+msgstr "Adicionar Atividades"
 
-#: dudalibrary/templates/default/curricular_grade_details.html:41
+#: dudalibrary/templates/default/curricular_grade_details.html:44
 msgid "Add a new Class"
-msgstr "Adicionar nova Classe"
+msgstr "Adicionar nova Série"
 
 #: dudalibrary/templates/default/featured_list.html:19
 msgid "More"
@@ -294,12 +329,7 @@ msgstr "Mais"
 msgid "Language"
 msgstr "Idioma"
 
-#: dudalibrary/templates/default/languages.html:13
-#: dudalibrary/templates/default/sidebar.html:11
-msgid "Go"
-msgstr "Ir"
-
-#: dudalibrary/templates/default/paginator.html:12
+#: dudalibrary/templates/default/paginator.html:26
 #, python-format
 msgid ""
 "%(in_page_total_count)s results on this page out of %(total_count)s "
@@ -434,7 +464,7 @@ msgid "Ooops. No resources to show!"
 msgstr "Ooops. Nenhum recurso para mostrar!"
 
 #: dudalibrary/templates/default/resources_object_list.html:51
-#: dudalibrary/templates/default/search/search.html:56
+#: dudalibrary/templates/default/search/search.html:55
 msgid "Categories"
 msgstr "Categorias"
 
@@ -445,11 +475,6 @@ msgstr "Nenhum recurso encontrado"
 #: dudalibrary/templates/default/resources_object_list.html:60
 msgid "Try random resource!"
 msgstr "Tente um recurso aleatório!"
-
-#: dudalibrary/templates/default/sidebar.html:8
-#: dudalibrary/templates/default/search/search.html:6
-msgid "Search"
-msgstr "Buscar"
 
 #: dudalibrary/templates/default/sidebar.html:17
 msgid "Curricular Grades"
@@ -484,7 +509,7 @@ msgstr[1] "com %(num_votes)s votos"
 
 #: dudalibrary/templates/default/admin/admin_enqueue_resources.html:11
 msgid "Put Items on Queue"
-msgstr ""
+msgstr "Adicionar à Lista de Download"
 
 #: dudalibrary/templates/default/admin/base_site.html:4
 #: dudalibrary/templates/default/admin/base_site.html:23
@@ -495,42 +520,54 @@ msgstr "Duda Library"
 msgid "Enqueue Resources"
 msgstr "Colocar Recurso na Lista de Download"
 
-#: dudalibrary/templates/default/search/search.html:20
+#: dudalibrary/templates/default/search/search.html:7
+msgid ""
+"\n"
+"    Showing %(in_page_total_count)s results out of %(total_count)s found "
+"items."
+msgstr ""
+"%(in_page_total_count)s resultados nesta página de um total de "
+"%(total_count)s recursos encontrados."
+
+#: dudalibrary/templates/default/search/search.html:16
 msgid "Results"
 msgstr "Resultados"
 
-#: dudalibrary/templates/default/search/search.html:65
-msgid "No results found."
-msgstr "Nenhum resultado encontrado."
+#: dudalibrary/templates/default/search/search.html:42
+msgid "Resource"
+msgstr "Recurso"
+
+#: dudalibrary/templates/default/search/search.html:68
+msgid "Activity"
+msgstr "Atividade"
 
 #: dudalibrary/templates/default/search/search.html:70
-msgid "Previous"
-msgstr "Anterior"
+msgid "Items"
+msgstr "Ítens"
 
-#: dudalibrary/templates/default/search/search.html:72
-msgid "Next"
-msgstr "Próximo"
+#: dudalibrary/templates/default/search/search.html:84
+msgid "No results found."
+msgstr "Nenhum resultado encontrado."
 
 #: frontend/views.py:74
 msgid "ZIP files allowed only"
 msgstr "Somente Arquivos em Formato ZIP"
 
-#: frontend/views.py:304
-#, python-format
-msgid "Identifier %s has been Queued"
-msgstr "Identificado %s foi adicionado à Lista de Downloads"
+#: frontend/views.py:92
+msgid "Add new subject after adding this one."
+msgstr "Adicionar uma nova matéria após esta"
 
-#: frontend/views.py:306
+#: frontend/views.py:310
 #, python-format
-msgid "Identifier %s HAS NOT BEEN QUEUED!"
-msgstr "O Identificador %s NÃO FOI ADICIONADO À LISTA DE DOWNLOADS!"
+msgid "Identifier %(identifier)s HAS NOT been Identified"
+msgstr "Identificador %s(identifier)s NÃO FOI IDENTIFICADO"
 
-#: frontend/views.py:449
+#: frontend/views.py:474
 #, python-format
 msgid "<b>Success!</b> Curricular Class %s Added"
 msgstr "<b>Sucesso!</b> Série %s Adicionada"
 
-#: frontend/views.py:451
+#: frontend/views.py:476
 msgid "<b>Error!</b> Curricular Class NOT Added"
 msgstr "<b>Erro!</b> Série NÃO Adicionada"
 
@@ -626,3 +663,18 @@ msgstr "Arquivo de gatilho"
 #: resources/models.py:62
 msgid "Number of thumbnails"
 msgstr "Miniaturas"
+
+#~ msgid "^search/"
+#~ msgstr "^buscar/"
+
+#~ msgid "Previous"
+#~ msgstr "Anterior"
+
+#~ msgid "Next"
+#~ msgstr "Próximo"
+
+#~ msgid "Identifier %s has been Queued"
+#~ msgstr "Identificado %s foi adicionado à Lista de Downloads"
+
+#~ msgid "Identifier %s HAS NOT BEEN QUEUED!"
+#~ msgstr "O Identificador %s NÃO FOI ADICIONADO À LISTA DE DOWNLOADS!"

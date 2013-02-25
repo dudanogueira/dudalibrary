@@ -29,8 +29,10 @@ class CurricularGrade(models.Model):
 
 class SubjectClass(models.Model):
     '''1 Serie, 2 Serie, etc'''
+
     def __unicode__(self):
         return u'%s' % self.title
+    
     curricular_grade = models.ForeignKey(CurricularGrade)
     title = models.CharField(_("Title"), blank=True, null=True, max_length=100)
     description = models.TextField(_("Description"), blank=True)

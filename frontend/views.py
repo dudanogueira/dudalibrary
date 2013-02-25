@@ -304,9 +304,12 @@ def admin_enqueue_resources(request):
                     priority=8,
                 )
                 if created:
-                    messages.success(request, _('Identifier %s has been Queued as PLGUIN:%s') % (item.identifier_id, item.PLUGIN_NAME))
+                    msg = 'Identifier %(identifier)s has been Queued as PLGUIN: %(plugin)s' % {'identifier': item.identifier_id, 'plugin':item.PLUGIN_NAME }
+                    messages.success(request, _(msg))
             else:
-                messages.error(request, _('Identifier %s HAS NOT BEEN QUEUED!') % item.identifier_id)
+                msg = _('Identifier %(identifier)s HAS NOT been Identified' % { 'identifier': item.identifier_id})
+                messages.success(request, _(msg))
+                
     
     
     return render_to_response('admin/admin_enqueue_resources.html', locals(),
