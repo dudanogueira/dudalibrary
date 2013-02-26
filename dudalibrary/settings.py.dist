@@ -10,9 +10,12 @@ INSTANCE = lambda *x:os.path.join(os.path.dirname(__file__), *x)
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+# CELERY USE IS EXPERIMENTAL
+USE_CELERY = False
+BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://teste@localhost:6379/0'
 
-
-USE_CELERY = True
+YOUTUBE_DOWNLOAD_METHOD = 'youtube-dl'
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -23,7 +26,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'dev.db',                      # Or path to database file if using sqlite3.
+        'NAME': 'dudalibrary.sqlite3',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -33,13 +36,13 @@ DATABASES = {
 
 
 # SEARCH 
-
-HAYSTACK_SEARCH_ENGINE = 'xapian'
-
+USE_HAYSTACK = True
 HAYSTACK_SITECONF = 'dudalibrary.search_sites'
 
-HAYSTACK_XAPIAN_PATH = INSTANCE('dudalibrary_search_index')
-
+# for xapian
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
+HAYSTACK_SEARCH_ENGINE = 'xapian'
+HAYSTACK_XAPIAN_PATH = '/tmp/search_dudalibrary' # you want to change this
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.xapian_backend.XapianEngine',
@@ -47,19 +50,20 @@ HAYSTACK_CONNECTIONS = {
     },
 }
 
+# for dev / simple / DONT USE ON PRODUCTION
+#HAYSTACK_SEARCH_ENGINE = 'simlple'
+#HAYSTACK_CONNECTIONS = {
+#    'default': {
+#        'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
+#    },
+#}
+
 # CONTENTS PER PAGE TO SHOW AT RESULT (defaults to 10)
 CONTENT_PER_PAGE = 10
 
 # SOURCE PLUGINS AVAILABLE
 # list item
 SOURCE_PLUGINS =  ('portaldoprofessor', 'khanacademy', 'youtube')
-
-###PLUGINS OPTIONS
-## YOUTUBE
-# youtube_downloader or youtube-dl
-YOUTUBE_DOWNLOAD_METHOD = 'youtube-dl'
-## OTHERS
-
 
 # DONT TRANSLATE IT HERE, USE django i18n tools.
 CONTENT_LANGUAGES = {
@@ -81,20 +85,11 @@ CONTENT_LANGUAGES = {
 LOG_DIR = INSTANCE('logs')
 
 # CONTENT_ROOT - Where files are stored. Default to
-#CONTENT_ROOT = INSTANCE("../web-redable")
-#CONTENT_ROOT = "/var/www/dudalibrary-content/archive/"
-CONTENT_ROOT = "/Users/dudanogueira/Sites/web-redable/"
+CONTENT_ROOT = INSTANCE("../static")
+
 
 # CONTENT_URL - relative link where the files can be found thru the webserver
-CONTENT_URL = "http://127.0.0.1/~dudanogueira/web-redable/"
-#CONTENT_URL = "http://192.168.1.115/~dudanogueira/web-redable/"
-
-#REPOSITORY_ROOT = "/Users/dudanogueira/WORK/workspace/contentserver-src/files/repository/"
-#REPOSITORY_ROOT = INSTANCE("../web-redable/repository")
-REPOSITORY_ROOT = "/Users/dudanogueira/Sites/web-redable/repository"
-REPOSITORY_URL = "/archive/repository"
-
-ADMIN_MEDIA_PREFIX = '/static/admin/'
+CONTENT_URL = "/static/"
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -128,7 +123,7 @@ USE_I18N = True
 USE_L10N = True
 
 # If you set this to False, Django will not use timezone-aware datetimes.
-USE_TZ = True
+USE_TZ = False
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
@@ -211,6 +206,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # admin
+    'django_admin_bootstrapped',
     'django.contrib.admin',
     'django.contrib.admindocs',
     # third party apps
@@ -226,6 +222,8 @@ INSTALLED_APPS = (
     'curricular',
     'queue',
     'haystack',
+    'djcelery',
+    'kombu.transport.django',
 )
 
 # A sample logging configuration. The only tangible logging
