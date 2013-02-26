@@ -9,13 +9,13 @@
 	<meta name="description" content="" />
 	<meta name="keywords" content="" />
 	<meta name="author" content="Duda Nogueira" />
-	<link href='{{MEDIA_URL}}css/style.css' type="text/css" rel="stylesheet"/>
-	<link href='{{MEDIA_URL}}css/jquery.rating.css' type="text/css" rel="stylesheet"/>
-	<script type="text/javascript" src="{{MEDIA_URL}}js/jquery.js"></script>
-	<script type="text/javascript" src="{{MEDIA_URL}}js/jquery.rating.js"></script>
-	<script type="text/javascript" src="{{MEDIA_URL}}js/jquery-ui.js"></script>
-	<script type="text/javascript" src="{{MEDIA_URL}}js/ratings.js"></script>
-	<script type="text/javascript" src="{{MEDIA_URL}}js/showhide.js"></script>
+	<link href='{{STATIC_URL}}site_media/css/style.css' type="text/css" rel="stylesheet"/>
+	<link href='{{STATIC_URL}}site_media/css/jquery.rating.css' type="text/css" rel="stylesheet"/>
+	<script type="text/javascript" src="{{STATIC_URL}}site_media/js/jquery.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}site_media/js/jquery.rating.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}site_media/js/jquery-ui.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}site_media/js/ratings.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}site_media/js/showhide.js"></script>
 </head>
 <body>
 	<div id="wrapper">
@@ -43,7 +43,7 @@
 			<div id="sidebar">
 				<div id="logodiv">
 						<div id="logo">
-							<a href="{% url index %}"><img src="{{MEDIA_URL}}img/logo-dudalibrary.png" /></a>
+							<a href="{% url index %}"><img src="{{STATIC_URL}}site_media/img/logo-dudalibrary.png" /></a>
 										<p>{% trans "tons of open educational resources" %}</p>
 						</div>
 				</div>

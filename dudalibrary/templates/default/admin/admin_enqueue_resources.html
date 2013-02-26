@@ -1,18 +1,44 @@
-{% extends "admin/change_list.html" %}
+{% extends "admin/base_site.html" %}
 {% load i18n %}
 {% block title %}Content Manager - {% trans "Downloader" %}{% endblock %}
 
+
+
 {% block breadcrumbs %}
-<div class="breadcrumbs"><a href="{% url admin:index %}">{% trans "Back"%}...</a></div>
+
+<ul class="breadcrumb">
+<li><a href="{% url admin:index %}">{% trans "Home" %}</a> <span class="divider">/</span></li>
+<li>{% trans "Add Resource" %}</a> <span class="divider">/</span></li>
+<li>{% trans "Request Resource" %}</li>
+</ul>
+
+{% endblock %}
+
+{% block object-tools %}
+
+<a class="brand">{% trans "Request Resource" %}</a>
+
 {% endblock %}
 
 {% block content %}
-    <link href="{{STATIC_URL}}frontend/bootstrap/css/bootstrap.css" rel="stylesheet">
-	<h2>{% trans "Put Items on Queue" %}</h2>
-    <form method="post" class="form-horizontal">
-        {% csrf_token %}
-        <textarea name="resources_to_process"></textarea>
-        <p><input class="btn" type="submit" value="{% trans 'Add Custom Content' %}" /></p>
-    </form>
+<div class="row-fluid">
+
+    <div id="content-main" class="span12">
+
+        {# main well #}
+        <div class="well">
+            <form method="post" class="form-horizontal">
+                {% csrf_token %}
+                <p><textarea name="resources_to_process" rows="5" class="input-block-level input-xlarge"></textarea></p>
+                <p><input class="btn btn-info" type="submit" value="{% trans 'Request these resources' %}" /></p>
+            </form>
+
+        </div>
+        
+    </div>
+    
+</div>
+
+
     
 {% endblock %}

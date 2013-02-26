@@ -345,7 +345,7 @@ def add_custom(request):
     else:
         form = NewCustomResourceForm()
         
-    return render_to_response('add_custom_resource.html', locals(),
+    return render_to_response('admin/admin_upload_resource.html', locals(),
         context_instance=RequestContext(request),)
 
 def activity_details(request, object_id):

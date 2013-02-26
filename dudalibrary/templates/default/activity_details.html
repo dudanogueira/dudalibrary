@@ -15,7 +15,7 @@
                               <h3>{{forloop.counter}} - {{activity_unit.item.title}}</h3>
             <div class="row-fluid">
               <div class="span1">
-                  <a href="{{activity_unit.item.content_url}}"><img alt="{% trans "Play this Resource" %}" src="{{MEDIA_URL}}img/icons/play.png" class="button"/></a> <a href="{{activity_unit.item.content_url_path}}"><img src="{{MEDIA_URL}}img/icons/folder.png" class="button" alt="{% trans "See Resource Folder" %}"/></a>
+                  <a href="{{activity_unit.item.content_url}}"><img alt="{% trans "Play this Resource" %}" src="{{STATIC_URL}}/site_media/img/icons/play.png" class="button"/></a> <a href="{{activity_unit.item.content_url_path}}"><img src="{{STATIC_URL}}site_media/img/icons/folder.png" class="button" alt="{% trans "See Resource Folder" %}"/></a>
               </div>
               
               <div class="span11">
@@ -34,7 +34,7 @@
             
             <div class="row-fluid">
               <div class="span1">
-                  <a href="{{activity_unit.item.full_url}}"><img alt="{% trans "Play this Resource" %}" src="{{MEDIA_URL}}img/icons/play.png" class="button"/></a>
+                  <a href="{{activity_unit.item.full_url}}"><img alt="{% trans "Play this Resource" %}" src="{{STATIC_URL}}site_media/img/icons/play.png" class="button"/></a>
                   
               </div>
               

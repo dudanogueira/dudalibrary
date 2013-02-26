@@ -14,9 +14,9 @@ $(document).ready(function(){
 </script>
 <div id="resource-action-buttons">
 	<ul>
-		<li><a href="{{resource.content_url}}"><img alt="{% trans "Play this Resource" %}" src="{{MEDIA_URL}}img/icons/play.png" class="button"/></a></li>
-		<li><a href="{{resource.content_url_path}}"><img src="{{MEDIA_URL}}img/icons/folder.png" class="button" alt="{% trans "See Resource Folder" %}"/></a></li>
-		{# <li><a href="javascript:onClick=alert('Not Implemented');"><img src="{{MEDIA_URL}}img/icons/download.png" class="button" alt="{% trans "Download Resource Pack" %}"/></a></li> #}
+		<li><a href="{{resource.content_url}}"><img alt="{% trans "Play this Resource" %}" src="{{STATIC_URL}}site_media/img/icons/play.png" class="button"/></a></li>
+		<li><a href="{{resource.content_url_path}}"><img src="{{STATIC_URL}}site_media/img/icons/folder.png" class="button" alt="{% trans "See Resource Folder" %}"/></a></li>
+		{# <li><a href="javascript:onClick=alert('Not Implemented');"><img src="{{STATIC_URL}}site_media/img/icons/download.png" class="button" alt="{% trans "Download Resource Pack" %}"/></a></li> #}
 	</ul>
 	<span id="button-desc"></span>
 </div>

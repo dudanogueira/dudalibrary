@@ -9,10 +9,10 @@
     <meta name="author" content="">
 
     <!-- Le styles -->
-    <link href='{{MEDIA_URL}}css/reset.css' type="text/css" rel="stylesheet"/>
+    <link href='{{STATIC_URL}}site_media/css/reset.css' type="text/css" rel="stylesheet"/>
     <link href="{{STATIC_URL}}frontend/bootstrap/css/bootstrap.css" rel="stylesheet">
-    <link href='{{MEDIA_URL}}css/style.css' type="text/css" rel="stylesheet"/>
-	<link href='{{MEDIA_URL}}css/jquery.rating.css' type="text/css" rel="stylesheet"/>
+    <link href='{{STATIC_URL}}site_media/css/style.css' type="text/css" rel="stylesheet"/>
+	<link href='{{STATIC_URL}}site_media/css/jquery.rating.css' type="text/css" rel="stylesheet"/>
     <script src="{{STATIC_URL}}frontend/js/jquery/jquery.js"></script>
     <style type="text/css">
       body {
@@ -77,7 +77,7 @@
         <div class="span3">
 			<div id="logodiv">
 					<div id="logo">
-						<a href="{% url index %}"><img src="{{MEDIA_URL}}img/logo-dudalibrary.png" /></a>
+						<a href="{% url index %}"><img src="{{STATIC_URL}}site_media/img/logo-dudalibrary.png" /></a>
 									<p style="text-align: center">{% trans "tons of educational resources" %}</p>
 					</div>
 			</div>

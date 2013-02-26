@@ -150,7 +150,7 @@ class Resource(models.Model):
     def thumbnails_path(self):
         thumbs = []
         if self.thumbnails == 0:
-            thumbs.append("%simg/icons/thumb-placeholder.png" % settings.MEDIA_URL)
+            thumbs.append("%ssite_media/img/icons/thumb-placeholder.png" % settings.STATIC_URL)
         else:
             base_url = settings.CONTENT_URL
             for t in range(1,int(self.thumbnails)+1):
