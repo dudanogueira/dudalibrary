@@ -89,7 +89,7 @@ CONTENT_ROOT = INSTANCE("../static")
 
 
 # CONTENT_URL - relative link where the files can be found thru the webserver
-CONTENT_URL = "/static/"
+CONTENT_URL = "/content"
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
