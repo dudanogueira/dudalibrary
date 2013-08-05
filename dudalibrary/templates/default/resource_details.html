@@ -27,7 +27,7 @@
 		{% include "resource_rating.html" %}
 		<h2>{% trans "Source" %}</h2>
 			{{resource.source}} <br />
-			[<a href="{% url index%}?q=&source={{resource.source.id}}&language=">{% trans "Show more resources from this source" %}</a>]
+			[<a href="?q=&source={{resource.source.id}}&language=">{% trans "Show more resources from this source" %}</a>]
 		<div id="thumbnails">
 			{% if resource.duration %}
 			<h2>{% trans "Duration" %}</h2>
@@ -50,7 +50,7 @@
 		<div id="tags">
 		<h2>{% trans "Related Tags" %}</h2>
 			{% for tag in tag_list %}
-				<a href="{% url tag_details tag.id %}">{{tag.name}}</a>{% if not forloop.last %},{%endif %}
+				<a href="{% url "tag_details" tag.id %}">{{tag.name}}</a>{% if not forloop.last %},{%endif %}
 			{% endfor %}
 		</div>
 		{% endif %}
@@ -97,7 +97,7 @@
 		<div id="source">
 			<h2>{% trans "Source" %}</h2>
 			<p><a href="{{resource.source.url}}">{{resource.source}}</a></p>
-			<small><a href="{% url index%}?q=&source={{resource.source.id}}&language=">{% trans "Show more resources from this source" %}</a></small>
+			<small><a href="{% url "index" %}?q=&source={{resource.source.id}}&language=">{% trans "Show more resources from this source" %}</a></small>
 		</div>
 		{% endif %}
 
@@ -138,7 +138,7 @@
 			<ul>
 			{% for item in related_resources %}
 			<hr class="horizontal-rule">
-	       	<li><a href="{% url resource_details item.id %}">{{forloop.counter}} - {{item.title}}</a></li>
+	       	<li><a href="{% url "resource_details" item.id %}">{{forloop.counter}} - {{item.title}}</a></li>
 			{% if forloop.last %}
 				<hr class="horizontal-rule">
 			{% endif %}

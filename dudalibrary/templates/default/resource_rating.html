@@ -17,7 +17,7 @@
 	{% else %}
 	<h2>{% trans "Classify this resource!" %}</h2>
 	{% endif %}
-    <form action="{% url ratings_vote %}" method="post" class="ratings">
+    <form action="{% url "ratings_vote" %}" method="post" class="ratings">
         {% csrf_token %}
 		{{rating_form}}
 		<span class="success" style="display: none;">{% trans "Vote registered!"%}</span>

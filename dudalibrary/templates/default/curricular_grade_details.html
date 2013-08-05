@@ -28,9 +28,9 @@
                         <h4><strong>{{subject}}</strong></h4>
                         <ul>
                             {% for activity in subject.activity_set.all %}
-                            <li><a href="{% url activity_details activity.id %}">{{activity}}{% if activity.description %} - {{activity.description}}{%endif%}</a></li>
+                            <li><a href="{% url "activity_details" activity.id %}">{{activity}}{% if activity.description %} - {{activity.description}}{%endif%}</a></li>
                             {% endfor %}
-                            {% if request.user and perms.curricular.add_activity %}                           <a href="{% url curricular_add_activity curricular_grade.id class.id subject.id %}" class="btn btn-info"><i class="icon icon-plus icon-white"></i> {% blocktrans %}Add Activity at {{subject}} Subject{% endblocktrans %}</a>
+                            {% if request.user and perms.curricular.add_activity %}                           <a href="{% url "curricular_add_activity" curricular_grade.id class.id subject.id %}" class="btn btn-info"><i class="icon icon-plus icon-white"></i> {% blocktrans %}Add Activity at {{subject}} Subject{% endblocktrans %}</a>
                             {% endif %}
 
                         </ul>
@@ -39,7 +39,7 @@
 
                     {% if request.user and perms.curricular.add_activity %}
                     <hr />
-                    <a class="btn btn-success" href="{% url curricular_activity_select_add_subject curricular_grade.id class.id %}"><i class="icon-white icon-plus"></i> {% trans "Add Activities" %}</a>
+                    <a class="btn btn-success" href="{% url "curricular_activity_select_add_subject" curricular_grade.id class.id %}"><i class="icon-white icon-plus"></i> {% trans "Add Activities" %}</a>
                     {% endif %}
                 </div>
                 {% endfor %}
@@ -66,7 +66,7 @@
             {% else %}
             <ul>
                 {% for curricular_child in curricular_grade.curriculargrade_set.all %}
-                <li><a href="{% url curricular_grade curricular_child.id %}">{{curricular_child}}</a></li>
+                <li><a href="{% url "curricular_grade" curricular_child.id %}">{{curricular_child}}</a></li>
                 {% endfor %}
             </ul>
         

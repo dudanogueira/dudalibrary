@@ -16,7 +16,7 @@ urlpatterns = patterns('',
     
 )
 
-from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.conf.urls.i18n import i18n_patterns
 from django.utils.translation import ugettext_lazy as _
@@ -53,10 +53,10 @@ urlpatterns += i18n_patterns('',
 if settings.DEBUG:
     urlpatterns += patterns('',
     # CONTENT MEDIA
-    url(r'^media/(.*)$', 'django.views.static.serve',
-        {'document_root': settings.MEDIA_ROOT}),
+        (r'^media/(?P<path>.*)$', 'django.views.static.serve',
+            {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
+
+        (r'^content/(?P<path>.*)$', 'django.views.static.serve',
+            {'document_root': settings.CONTENT_ROOT, 'show_indexes': True }),
     )
-    url(r'^static/(.*)$', 'django.views.static.serve',
-        {'document_root': settings.STATIC_ROOT }
-    ),
     

@@ -4,11 +4,10 @@ from options.models import Language
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-from django.contrib.admin.models import User
 import tagging
 from tagging.fields import TagField
 from django.utils.translation import ugettext_lazy as _
-
+from django.conf import settings
 
 
 class CurricularGrade(models.Model):
@@ -22,7 +21,7 @@ class CurricularGrade(models.Model):
     parent = models.ForeignKey('self', blank=True, null=True, limit_choices_to = {'parent': None})
     title = models.CharField(blank=False, null=False, max_length=100)
     description = models.TextField(blank=True)
-    user = models.ForeignKey(User, blank=True, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
     # metadata information
     created = models.DateTimeField(blank=True, default=datetime.datetime.now, auto_now_add=True)
     updated = models.DateTimeField(blank=True, default=datetime.datetime.now, auto_now=True)

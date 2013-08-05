@@ -54,10 +54,10 @@ class Source(models.Model):
     name = models.CharField(blank=True, max_length=500)
     slug = models.CharField(blank=True, max_length=400)
     description = models.TextField(blank=True)
-    url = models.URLField(blank=True, verify_exists=True)
-    contact_url = models.URLField(blank=True, verify_exists=True)
+    url = models.URLField(blank=True)
+    contact_url = models.URLField(blank=True)
     contact_email = models.EmailField(blank=True)
-    abuse_url = models.URLField(blank=True, verify_exists=True)
+    abuse_url = models.URLField(blank=True)
     # metadata information
     created = models.DateTimeField(blank=True, default=datetime.datetime.now, auto_now_add=True)
     updated = models.DateTimeField(blank=True, default=datetime.datetime.now, auto_now=True)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.utils.encoding import smart_str
-import datetime, os, subprocess, md5, urllib2, time
+import datetime, os, subprocess, urllib2, time
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from options.models import Category, Language, Source, Device
@@ -62,8 +62,8 @@ class Resource(models.Model):
     thumbnails = models.IntegerField(blank=True, null=True, default=0, verbose_name=_("Number of thumbnails"))
     duration = models.IntegerField(blank=True, null=True, default=0)
     # resource original information
-    resource_url = models.URLField(blank=True, max_length=400, verify_exists=False, help_text="Resource url origin")
-    resource_download_url = models.URLField(blank=True, max_length=800, verify_exists=False)
+    resource_url = models.URLField(blank=True, max_length=400, help_text="Resource url origin")
+    resource_download_url = models.URLField(blank=True, max_length=800)
     resource_downloaded_file = models.CharField(blank=True, max_length=800)
     resource_size = models.CharField(blank=True, max_length=100)
     resource_pageviews = models.IntegerField(blank=True, null=True)

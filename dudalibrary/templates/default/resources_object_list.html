@@ -57,7 +57,7 @@
 </div>
 <hr class="horizontal-rule">
 {% empty %}
-	<p>{% trans "No resources found" %}. <a href="{% url get_random_resource_url %}">{% trans "Try random resource!" %}</a></p>
+	<p>{% trans "No resources found" %}. <a href="{% url "get_random_resource_url" %}">{% trans "Try random resource!" %}</a></p>
 {% endfor %}
 	
 </div>

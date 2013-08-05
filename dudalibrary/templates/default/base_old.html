@@ -22,7 +22,7 @@
 		<div id="header">
 			<div id="auth">
 				{% if request.user.is_authenticated %}
-					{% trans "logged in as" %}: {{request.user}} [<a href="{% url auth_logout %}?next={% url index %}">{% trans "logout" %}</a>]
+					{% trans "logged in as" %}: {{request.user}} [<a href="{% url" auth_logout" %}?next={% url "index" %}">{% trans "logout" %}</a>]
 				{% else %}
 					{% trans "not logged in" %}
 				{% endif %}
@@ -43,7 +43,7 @@
 			<div id="sidebar">
 				<div id="logodiv">
 						<div id="logo">
-							<a href="{% url index %}"><img src="{{STATIC_URL}}site_media/img/logo-dudalibrary.png" /></a>
+							<a href="{% url "index" %}"><img src="{{STATIC_URL}}site_media/img/logo-dudalibrary.png" /></a>
 										<p>{% trans "tons of open educational resources" %}</p>
 						</div>
 				</div>

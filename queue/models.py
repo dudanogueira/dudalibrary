@@ -53,7 +53,7 @@ class ResourceQueue(models.Model):
     
     status = models.CharField(blank=False, default="queued", max_length=100, choices=RESOURCE_QUEUE_STATUS_CHOICES)
     priority = models.IntegerField(blank=False, null=False, default=10, help_text="lower the better")
-    full_url = models.URLField(blank=True, verify_exists=False)
+    full_url = models.URLField(blank=True)
     identifier_id = models.CharField(blank=False, null=False, max_length=500)
     plugin_name = models.CharField(blank=False, null=False, max_length=300)
     plugin_slug = models.CharField(blank=False, null=False, max_length=100)

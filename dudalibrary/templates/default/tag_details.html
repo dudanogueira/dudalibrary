@@ -9,7 +9,7 @@
 	
 	<h3>{% blocktrans %}Tags Related to Tag "{{tag}}"{% endblocktrans %}</h3>
 	{% for tag in related_tags %}
-		<a href="{% url tag_details tag.id %}">{{tag.name}} ({{tag.count}})</a>{% if not forloop.last %},{%endif %}
+		<a href="{% url "tag_details" tag.id %}">{{tag.name}} ({{tag.count}})</a>{% if not forloop.last %},{%endif %}
 	{% endfor %}
 </div>
 {% endif %}

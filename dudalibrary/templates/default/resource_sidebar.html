@@ -21,4 +21,4 @@ $(document).ready(function(){
 	<span id="button-desc"></span>
 </div>
 
-{## <p class="backtosearch"><a href="{% url index %}?{{request.META.QUERY_STRING}}#{{resource.app_label}}-item-{{resource.id}}">{% trans "back" %}</a></p> ##}
+{## <p class="backtosearch"><a href="{% url "index" %}?{{request.META.QUERY_STRING}}#{{resource.app_label}}-item-{{resource.id}}">{% trans "back" %}</a></p> ##}
