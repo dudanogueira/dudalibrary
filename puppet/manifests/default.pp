@@ -1,10 +1,22 @@
-# BASE CONFS
-$tz = 'America/Sao_Paulo' # Timezone
-$project = 'dudalibrary' # Used in nginx and uwsgi
-$domain_name = 'dudalibrary.org'
-$username = 'dudalibrary' # User to create
-$db_password = 'dudalibrary' # Mysql password for $db_user
-$db_name = 'dudalibrary' # Mysql database name to create
+#
+# If you followed README.md to here, follow on:
+#
+
+# after ssh into the machine, run:
+# $ sudo pip install django psycopg2 South django-admin-bootstrapped six django-extensions django-haystack django-tagging docutils python-dateutil pillow pyelasticsearch werkzeug BeautifulSoup
+
+# Become postgres user
+# $ sudo su postgres
+# Enter Database and create things
+# $ psql
+# $ CREATE USER dudalibrary_user PASSWORD 'dudalibrary_passwd';
+# $ CREATE DATABASE dudalibrary_db OWNER dudalibrary_user TEMPLATE template_postgis ENCODING 'utf8';
+
+# ATTENTION
+# here we need to be able to run all the provisions and end up with a fully working environment.
+# right now, I can only get the systems package installed, while installing the python dependencies using puppet ends up with the python broke.
+
+
 
 # basic bootstrap
 exec { 'apt-get update':
@@ -27,10 +39,6 @@ package {
     ensure  =>  'installed',
     require => [ Package['python-dev'], Exec['apt-get update'] ],
 }
-
-# ln -s /usr/lib/`uname -i`-linux-gnu/libfreetype.so /usr/lib/
-# ln -s /usr/lib/`uname -i`-linux-gnu/libjpeg.so /usr/lib/
-# ln -s /usr/lib/`uname -i`-linux-gnu/libz.so /usr/lib/
 
 class { 'elasticsearch':
    java_install => true,

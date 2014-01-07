@@ -10,11 +10,6 @@ INSTANCE = lambda *x:os.path.join(os.path.dirname(__file__), *x)
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-# CELERY USE IS EXPERIMENTAL
-USE_CELERY = False
-BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://teste@localhost:6379/0'
-
 YOUTUBE_DOWNLOAD_METHOD = 'youtube-dl'
 
 ADMINS = (
@@ -25,33 +20,32 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'dudalibrary.sqlite3',                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+        'ENGINE': 'django.contrib.gis.db.backends.postgis', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'dudalibrary_db',                      # Or path to database file if using sqlite3.
+        'USER': 'dudalibrary_user',                      # Not used with sqlite3.
+        'PASSWORD': 'dudalibrary_pwd',                  # Not used with sqlite3.
+        'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
 
-
 # SEARCH 
 USE_HAYSTACK = True
-HAYSTACK_SITECONF = 'dudalibrary.search_sites'
 
 # for xapian
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
-HAYSTACK_SEARCH_ENGINE = 'xapian'
-HAYSTACK_XAPIAN_PATH = '/tmp/search_dudalibrary' # you want to change this
+
 HAYSTACK_CONNECTIONS = {
     'default': {
-        'ENGINE': 'haystack.backends.xapian_backend.XapianEngine',
-        'PATH': os.path.join(os.path.dirname(__file__), 'xapian_index'),
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'INDEX_NAME': 'haystack',
     },
 }
 
+#HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
 # for dev / simple / DONT USE ON PRODUCTION
-#HAYSTACK_SEARCH_ENGINE = 'simlple'
 #HAYSTACK_CONNECTIONS = {
 #    'default': {
 #        'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
@@ -85,8 +79,7 @@ CONTENT_LANGUAGES = {
 LOG_DIR = INSTANCE('logs')
 
 # CONTENT_ROOT - Where files are stored. Default to
-CONTENT_ROOT = INSTANCE("../static")
-
+CONTENT_ROOT = "/vagrant/static/content"
 
 # CONTENT_URL - relative link where the files can be found thru the webserver
 CONTENT_URL = "/content"
@@ -205,6 +198,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
     # admin
     'django_admin_bootstrapped',
     'django.contrib.admin',
@@ -220,8 +214,6 @@ INSTALLED_APPS = (
     'curricular',
     'resource_queue',
     'haystack',
-    'djcelery',
-    'kombu.transport.django',
 )
 
 # A sample logging configuration. The only tangible logging
