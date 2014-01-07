@@ -1,0 +1,55 @@
+{
+  "project_page": "https://github.com/elasticsearch/puppet-elasticsearch",
+  "license": "Apache License, Version 2.0",
+  "source": "https://github.com/elasticsearch/puppet-elasticsearch",
+  "checksums": {
+    "Rakefile": "83beb257523a2df332a5c8019c1b0ce1",
+    "manifests/service/init.pp": "2deefe2dc4d105d3a2bff0c9cd9954c6",
+    "manifests/init.pp": "0c9bea930bcf96c71407c60bc6b3296a",
+    "manifests/ruby.pp": "84f7b56621102640ea959aebf275e531",
+    "manifests/template.pp": "d7c4f631506a8d923981c138407a4024",
+    "templates/etc/elasticsearch/elasticsearch.yml.erb": "568682a376a232070ce14deee8e9aee2",
+    "spec/defines/template_spec.rb": "af1b3564c41e6cce7d9300ae7d9aa78e",
+    "manifests/config.pp": "754ae9e74f50ea613ce3e6ca0643f35c",
+    "CHANGELOG": "b65a6bfc7f42283679500b5495d3d472",
+    "spec/spec_helper.rb": "3ea886dd135e120afa31e0aab12e85b0",
+    "manifests/service.pp": "d9a9a7fd71190e92f0522ca29925b7d8",
+    "spec/classes/002_elasticsearch_init_redhat_spec.rb": "ddbe9ec79eadd9fffe68b5b08f3e2f99",
+    "spec/defines/ruby_spec.rb": "d2ed0fa206e50a12417bf50688c83eb8",
+    "CONTRIBUTORS": "14df2fd27cf7b6ca9833527f2ba93442",
+    "LICENSE": "69dd5b1e203e4ad2d5fe607a0cd26c22",
+    "spec/classes/003_elasticsearch_init_unknown_spec.rb": "430ede15acf4b318deef53205d37ebcf",
+    "manifests/python.pp": "10ebefe3c8241fc23870148c0672739d",
+    "templates/etc/init.d/elasticsearch.RedHat.erb": "162b3fc304ad35ce10f85fbfffd1ee2a",
+    "manifests/java.pp": "6caeda7842ce49bbf191b10ec5246367",
+    "manifests/package.pp": "9921fe274edc64e1334515a61c174285",
+    "spec/lib/parser_validate_task.rb": "efac88c08221fab9dd0418c0edd0e95a",
+    "spec/classes/005_elasticsearch_java_spec.rb": "1dbd068f14744fc6b1652189127f573e",
+    "spec/defines/python_spec.rb": "e29f6d420ffd362c75b8a0b297e08a17",
+    "CONTRIBUTING.md": "15a79198ea0a81b5a67599172625b01f",
+    "Modulefile": "3c586412ca0ca9083390048598b1ff42",
+    "spec/lib/template_check_task.rb": "52faf116ba58133d33991433cc482caf",
+    "manifests/plugin.pp": "ee0108bb52c49a6a67e0c1644ef284be",
+    "Gemfile": "093ea56cbbd6a0b9c75b4ad223ce15a6",
+    "README.md": "6b42b5a92f491f0eedd889e627f5d642",
+    "templates/etc/sysconfig/defaults.erb": "f0c934f803703e493c32506573e782c6",
+    "spec/classes/004_elasticsearch_init_config_spec.rb": "15b89da0fb28b2e60943b24e03c31384",
+    "templates/etc/init.d/elasticsearch.Debian.erb": "cf2f1c14ad89417b84a1a4b494bd8a01",
+    "spec/classes/001_elasticsearch_init_debian_spec.rb": "132439e0ec4c26810c3fd58ab705a64e",
+    "manifests/params.pp": "db1497beb3ed8fbf548edb236b608753"
+  },
+  "types": [
+
+  ],
+  "description": "Module for managing and configuring Elasticsearch nodes",
+  "version": "0.2.0",
+  "summary": "Module for managing and configuring Elasticsearch nodes",
+  "name": "elasticsearch-elasticsearch",
+  "author": "elasticsearch",
+  "dependencies": [
+    {
+      "version_requirement": ">= 3.0.0",
+      "name": "puppetlabs/stdlib"
+    }
+  ]
+}

@@ -73,6 +73,7 @@ class Resource(models.Model):
     source = models.ForeignKey(Source, blank=False, null=False)
     language = models.ForeignKey(Language, blank=True, null=True)
     category = models.ManyToManyField(Category, blank=True, null=True)
+    main_category = models.ForeignKey(Category, related_name="main_category_resource_set")
     device = models.ManyToManyField(Device, blank=True, null=True)
     # system information
     status = models.CharField(blank=True, max_length=100, choices=STATUS_CHOICES, help_text="Operational status")
@@ -116,18 +117,18 @@ class Resource(models.Model):
         )
 
     def content_url(self):
-        return u"%s/%s/grid-%s/%s" % (settings.CONTENT_URL, str(self.source.slug.lower()), self.resource_reference_string, self.trigger)
+        return u"%s/%s/%s/%s" % (settings.CONTENT_URL, str(self.source.slug.lower()), self.resource_reference_string, self.trigger)
 
     def content_url_path(self):
-        return u"%s/%s/grid-%s/" % (settings.CONTENT_URL, str(self.source.slug.lower()), self.resource_reference_string)
+        return u"%s/%s/%s/" % (settings.CONTENT_URL, str(self.source.slug.lower()), self.resource_reference_string)
 
     def content_root(self):
-        path = u"%s/%s/grid-%s/%s" % (str(settings.CONTENT_ROOT), str(self.source.slug.lower()), str(self.resource_reference_string), str(self.trigger))
+        path = u"%s/%s/%s/%s" % (str(settings.CONTENT_ROOT), str(self.source.slug.lower()), str(self.resource_reference_string), str(self.trigger))
         # necessary to decode things like %20, %28...
         return urllib2.unquote(path)
         
     def content_root_path(self):
-        return u"%s/%s/grid-%s/" % (settings.CONTENT_ROOT, str(self.source.slug.lower()), self.resource_reference_string)
+        return u"%s/%s/%s/" % (settings.CONTENT_ROOT, str(self.source.slug.lower()), self.resource_reference_string)
 
     def create_content_root(self):
         if not os.path.exists(self.content_root()):
@@ -137,15 +138,15 @@ class Resource(models.Model):
         # considers the size of the ID digits.
         # different handles for 0-9 and >=10
         if len(str(self.id)) > 1:
-            return u'%s/%s/%s/%d/%d/grid-%s.zip' % (settings.REPOSITORY_URL, str(self.source.slug.lower()), self.language.code, int(str(self.id)[-1]), int(str(self.id)[-2]), self.reference_string)
+            return u'%s/%s/%s/%d/%d/%s.zip' % (settings.REPOSITORY_URL, str(self.source.slug.lower()), self.language.code, int(str(self.id)[-1]), int(str(self.id)[-2]), self.reference_string)
         else:
-            return u'%s/%s/%s/%d/grid-%s.zip' % (settings.REPOSITORY_URL, str(self.source.slug.lower()), self.language.code, int(str(self.id)[-1]), self.id)
+            return u'%s/%s/%s/%d/%s.zip' % (settings.REPOSITORY_URL, str(self.source.slug.lower()), self.language.code, int(str(self.id)[-1]), self.id)
 
     def repository_root(self):
         if len(str(self.id)) > 1:
-            return u'%s/%s/%s/%d/%d/grid-%s.zip' % (settings.REPOSITORY_ROOT, str(self.source.slug.lower()), self.language.code, int(str(self.id)[-1]), int(str(self.id)[-2]), self.reference_string)
+            return u'%s/%s/%s/%d/%d/%s.zip' % (settings.REPOSITORY_ROOT, str(self.source.slug.lower()), self.language.code, int(str(self.id)[-1]), int(str(self.id)[-2]), self.reference_string)
         else:
-            return u'%s/%s/%s/%d/grid-%s.zip' % (settings.REPOSITORY_ROOT, str(self.source.slug.lower()), self.language.code, int(str(self.id)[-1]), self.id)
+            return u'%s/%s/%s/%d/%s.zip' % (settings.REPOSITORY_ROOT, str(self.source.slug.lower()), self.language.code, int(str(self.id)[-1]), self.id)
 
     def thumbnails_path(self):
         thumbs = []
@@ -357,19 +358,5 @@ class Resource(models.Model):
 
 
 
-#ratings conf
-from ratings.handlers import ratings
-from ratings.forms import StarVoteForm, SliderVoteForm, VoteForm
-ratings.register(
-    Resource,
-    form_class=StarVoteForm,
-    can_change_vote=True,
-    allow_anonymous=True,
-    use_cookies=True,
-    allow_delete=True,
-)
-
 # tagging conf
 tagging.register(Resource, tag_descriptor_attr="tag_handler")
-
-# signals

@@ -4,23 +4,13 @@ PIL==1.1.7
 South==0.7.6
 anyjson==0.3.3
 billiard==2.7.3.19
-celery==3.0.13
-celery-with-redis==3.0
-celerymon==1.0.3
 django-admin-bootstrapped==0.3.2
-django-celery==3.0.11
 django-extensions==1.0.2
-django-generic-ratings==0.7
 django-haystack==1.2.7
--e git://github.com/thornomad/django-hitcount.git@37501420baef9d8e490a25dbe8786d506ae40de5#egg=django_hitcount-dev
 django-i18nurls==0.7
 django-tagging==0.3.1
 docutils==0.10
-kombu==2.5.4
 python-dateutil==1.5
 pytz==2012j
 readline==6.2.4.1
-redis==2.7.2
-tornado==2.4.1
-wsgiref==0.1.2
 xapian-haystack==1.1.5beta

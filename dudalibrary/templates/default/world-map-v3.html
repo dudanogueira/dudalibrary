@@ -1,0 +1,87 @@
+<style type="text/css">
+html, body {
+	height: 100%;
+}
+.olPopup p { margin:0px; font-size: .9em;}
+.olPopup h2 { font-size:1.2em; }
+</style>
+
+
+
+<script type="text/javascript">
+
+
+  OpenLayers.ProxyHost = "proxy.cgi?url=";
+  
+  var map, info;
+  
+  function load() {
+      map = new OpenLayers.Map({
+          div: "map",
+          maxExtent: new OpenLayers.Bounds(143.834,-43.648,148.479,-39.573)
+      });
+
+      var political = new OpenLayers.Layer.WMS("State Boundaries",
+          "http://demo.opengeo.org/geoserver/wms", 
+          {'layers': 'topp:tasmania_state_boundaries', transparent: true, format: 'image/gif'},
+          {isBaseLayer: true}
+      );
+
+      var roads = new OpenLayers.Layer.WMS("Roads",
+          "http://demo.opengeo.org/geoserver/wms", 
+          {'layers': 'topp:tasmania_roads', transparent: true, format: 'image/gif'},
+          {isBaseLayer: false}
+      );
+
+      var cities = new OpenLayers.Layer.WMS("Cities",
+          "http://demo.opengeo.org/geoserver/wms", 
+          {'layers': 'topp:tasmania_cities', transparent: true, format: 'image/gif'},
+          {isBaseLayer: false}
+      );
+
+      var water = new OpenLayers.Layer.WMS("Bodies of Water",
+          "http://demo.opengeo.org/geoserver/wms", 
+          {'layers': 'topp:tasmania_water_bodies', transparent: true, format: 'image/gif'},
+          {isBaseLayer: false}
+      );
+
+      var highlight = new OpenLayers.Layer.Vector("Highlighted Features", {
+          displayInLayerSwitcher: false, 
+          isBaseLayer: false 
+      });
+      
+      map.addLayers([political, roads, cities, water, highlight]); 
+
+      info = new OpenLayers.Control.WMSGetFeatureInfo({
+          url: 'http://demo.opengeo.org/geoserver/wms', 
+          title: 'Identify features by clicking',
+          queryVisible: true,
+          eventListeners: {
+              getfeatureinfo: function(event) {
+                  map.addPopup(new OpenLayers.Popup.FramedCloud(
+                      "chicken", 
+                      map.getLonLatFromPixel(event.xy),
+                      null,
+                      event.text,
+                      null,
+                      true
+                  ));
+              }
+          }
+      });
+      map.addControl(info);
+      info.activate();
+
+      map.addControl(new OpenLayers.Control.LayerSwitcher());
+      map.zoomToMaxExtent();
+  }
+
+</script>
+
+<div id="map">
+	
+</div>
+
+<script>
+load();
+</script>

@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib.gis import admin
 
 from options.models import Category, Language, Source, Device
 
@@ -8,7 +8,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class LanguageAdmin(admin.ModelAdmin):
     list_display = ('id','name', 'code',)
     
-class SourceAdmin(admin.ModelAdmin):
+class SourceAdmin(admin.GeoModelAdmin):
     pass
 
 class DeviceAdmin(admin.ModelAdmin):

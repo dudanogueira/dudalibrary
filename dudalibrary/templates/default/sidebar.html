@@ -22,3 +22,10 @@
 	</ul>
 </div>
 {% endif %}
+
+{% if select_detailed_source %}
+<h2>OER Sources {{source_points.count}}</h2>
+{{select_detailed_source}}
+<hr />
+<a href="" class="btn btn-primary"><i class="icon icon-plus icon-white"></i> Suggest a New OER Source.</a>
+{% endif %}

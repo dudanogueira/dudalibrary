@@ -71,7 +71,6 @@ class Parser(YoutubeParser):
             print "Need the youtubeuser"
         
     
-    
     def identify(self, url):
         YoutubeParser.identify(self, url)
         # identified already as youtube 

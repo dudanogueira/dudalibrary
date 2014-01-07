@@ -5,44 +5,23 @@
 	<h1>{% trans "Browse into knowledge" %}</h1>
         
 {% if featured_list %}
-    <div class="hero-unit">
+    <div class="well well-small">
 	{% include "featured_list.html" with object_list=featured_list %}
     </div>
 {% endif %}
     
     <div class="row-fluid">
-    {% if latest_additions %}
-      <div class="span4">
-  		<div id="latest_additions">
-  			<h2>{% trans "Latest Additions" %}</h2>
-  			{% include "latest_additions_list_items.html" with object_list=latest_additions %}
-  			<p>
-                <p><a class="btn" href="{% url "top_viewed" %}">{% trans "see the entire list  &raquo;" %}</a></p>
-            </p>
-  		</div>	
-      </div><!--/span-->
-      {% endif %}
-            
-    {% if hit_list %}
-      <div class="span4">
-  		<div id="topviews">
-  			{% include "tophit_list_items.html" with object_list=hit_list %}
-  		</div>	
-      </div><!--/span-->
-      {% endif %}
-      
-      
-      {% if top_qs_list %}
-      <div class="span4">
-		<div id="toprated">
-			<h2>{% trans "Top Rated" %}</h2>
-			{% if top_qs %}
-				{% include "topvoted_list_items.html" with object_list=top_qs_list %}
-			{% endif %}
-			<p><a class="btn"  href="{% url "top_voted" %}">{% trans "see the entire list  &raquo;" %}</a></p>
-		</div>          
-      </div><!--/span-->
-      {% endif %}
+
+	  <div class="span12">
+  			<h2>{% trans "OER World Map" %}</h2>
+			<style>
+			#map{
+				height: 400px;
+				width: 100%;
+			}
+			</style>
+		  {% include "world-map-v2.html" %}
+	  </div>
       
       
     </div><!--/row-->

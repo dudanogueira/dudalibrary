@@ -6,6 +6,9 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import resolve, reverse
 from django.http import QueryDict
 from django.shortcuts import render_to_response, get_object_or_404, redirect
+from django.db.models import Count
+
+from django.http import HttpResponse
 
 from dudalibrary import utils
 #i18n
@@ -22,17 +25,11 @@ from django.utils.translation import ugettext_lazy as _
 
 from resources.models import Resource
 from options.models import Source
-from queue.models import ResourceQueue
-from queue.tasks import add_resource_to_queue
+from resource_queue.models import ResourceQueue
 from django import forms
-import django_filters
 from dudalibrary.utils import get_query, resource_identifier
 from tagging.models import Tag, TaggedItem
 from tagging.utils import calculate_cloud, LOGARITHMIC
-from ratings.forms.widgets import StarWidget
-from ratings.forms import StarVoteForm
-from ratings.handlers import ratings
-from hitcount.models import HitCount
 from curricular.models import CurricularGrade, Activity, ActivityItem, SubjectClass, Subject
 
 from django.conf import settings
@@ -41,6 +38,7 @@ from django.contrib.sites.models import get_current_site
 
 CONTENT_PER_PAGE = getattr(settings, 'CONTENT_PER_PAGE', 10)
 TAGGING_RELATED_RESOURCE_LIST_NUM = getattr(settings, 'TAGGING_RELATED_RESOURCE_LIST_NUM', 10)
+TAGGING_RELATED_SOURCE_LIST_NUM = getattr(settings, 'TAGGING_RELATED_SOURCE_LIST_NUM', 10)
 
 import os
 
@@ -109,17 +107,6 @@ class AddActivityForm(forms.ModelForm):
 class SearchForm(forms.Form):
     q = forms.CharField(max_length=300, label="", required=False)
 
-class ResourcetFilter(django_filters.FilterSet):
-    def __init__(self, *args, **kwargs):
-        super(ResourcetFilter, self).__init__(*args, **kwargs)
-        self.filters['source'].extra.update(
-            {'empty_label': u'All Sources'})
-        self.filters['language'].extra.update(
-            {'empty_label': u'All Languages'})            
-    class Meta:
-        model = Resource
-        fields = ['source', 'category', 'language',]
-
 def search_query_set(q):
     if q != '' and q != None:
         output = get_query(q, ['description', 'title'])
@@ -160,18 +147,27 @@ def resource_details(request, object_id):
     resource = get_object_or_404(Resource, id=object_id)
     related_resources = TaggedItem.objects.get_related(resource, Resource, num=TAGGING_RELATED_RESOURCE_LIST_NUM)
     module_name = resource._meta.module_name
-    test = StarVoteForm(resource, 'main', score_range=(0,10), score_step=1)
-    handler = ratings.get_handler(Resource)
-    score = handler.get_score(resource, 'main')
-    try:
-        resource_actual_score = int(round(score.average, 0))
-    except:
-        resource_actual_score = 0
     app_label = resource._meta.app_label
     return render_to_response('resource_details.html', locals(),
         context_instance=RequestContext(request),)
 
+def source_details(request, object_id):
+    source = get_object_or_404(Source, id=object_id)
+    related_sources = TaggedItem.objects.get_related(source, Source, num=TAGGING_RELATED_SOURCE_LIST_NUM)
+    module_name = source._meta.module_name
+    app_label = source._meta.app_label
+    source_points = [source]
+    resources_form_source = source.resource_set.all().order_by('main_category')
+    return render_to_response('source_details.html', locals(),
+        context_instance=RequestContext(request),)
+
+class SelecrSourceForm(forms.Form):
+    
+    source = forms.ModelChoiceField(queryset=Source.objects.all())
+    
 def index(request):
+    select_detailed_source = SelecrSourceForm()
+    source_points = Source.objects.exclude(point=None)
     searchform = SearchForm(request.GET)
     tagcloud = Tag.objects.cloud_for_model(Resource)
     qs = Resource.objects.filter(enabled=True).exclude(status='rejected')
@@ -183,8 +179,6 @@ def index(request):
             )
         else:
             blankquery = True
-        qsfiltered = ResourcetFilter(request.GET, queryset=qs)
-        filter_form = qsfiltered.form
         objects = []
         [objects.append(item) for item in qsfiltered]
         # treat querystring, remove page
@@ -220,22 +214,9 @@ def index(request):
         curricular_grades = CurricularGrade.objects.filter(parent=None)
         featured_list = qs.filter(
                 #category__code='video', thumbnails__gt=0
-            ).order_by("?").all()[0:1]
+            ).order_by("?").all()[0:2]
         if featured_list.count() > 0:
             featured_list = featured_list.all()
-        qsfiltered = ResourcetFilter(request.GET, queryset=qs)
-        filter_form = qsfiltered.form
-        # top pageviews
-        resource_type = ContentType.objects.get(app_label="resources", model="resource")
-        hit_list = HitCount.objects.filter(content_type=resource_type)[0:7]
-        # top rated
-        handler = ratings.get_handler(qs.model)
-        top_qs = handler.annotate_scores(qs, 'main', 
-                average='average', num_votes='num_votes').order_by('-average')[0:7]
-        top_qs_list = []
-        for resource_listed in top_qs:
-            if resource_listed.average:
-                top_qs_list.append(resource_listed)
         # tags
         tags_to_cloud = Tag.objects.usage_for_queryset(qs, counts=True,)#[0:20]
         calculate_cloud(tags_to_cloud, steps=5, distribution=LOGARITHMIC)
@@ -260,7 +241,6 @@ class TopHitsView(ListView):
     
     def get_queryset(self):
         resource_type = ContentType.objects.get(app_label="resources", model="resource")
-        hit_objects = HitCount.objects.filter(content_type=resource_type)
         return hit_objects
     
     def get_context_data(self, **kwargs):
@@ -272,20 +252,6 @@ class TopHitsView(ListView):
         context['searchform'] = SearchForm()
         return context
 
-class TopVotesView(TopHitsView):
-    template_name = "topvoted_list.html"
-    paginate_by = CONTENT_PER_PAGE*2
-
-    def get_queryset(self):
-        qs = Resource.objects.filter(enabled=True).exclude(status='rejected')
-        handler = ratings.get_handler(Resource)
-        top_qs = handler.annotate_scores(qs, 'main', 
-                average='average', num_votes='num_votes').order_by('-average')
-        objects = []
-        for i in top_qs:
-            if i.average != None and i.average != "":
-                objects.append(i)
-        return objects
 
 def handle_new_custom_resource(f, path=None):
     if path:
@@ -466,6 +432,14 @@ def curricular_activity_select_add_subject(request, curricular_id, class_id):
     return render_to_response('curricular_activity_select_add_subject.html', locals(),
         context_instance=RequestContext(request),)
     
+
+def source_points(request):
+    from vectorformats.Formats import Django, GeoJSON
+    source_points = Source.objects.exclude(point=None)
+    djf = Django.Django(geodjango="point", properties=['name', 'id', 'absolute_url'])
+    geoj = GeoJSON.GeoJSON()
+    s = geoj.encode(djf.decode(source_points))
+    return HttpResponse(s, content_type="application/json")
 
 def get_curricular_grade(request, object_id):
     curricular_grade = get_object_or_404(CurricularGrade, id=object_id)

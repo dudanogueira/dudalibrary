@@ -167,12 +167,14 @@ class Parser(object):
                 print "COMMAND: %s" % dlcmd
                 self.resource.create_content_root()
                 os.chdir(self.resource.content_root_path())
+                print self.resource.content_root_path()
                 try:
                     p = subprocess.call(dlcmd, shell=True)
                     self.resource.status = "installed"
                     self.resource.enabled = True
                     self.resource.trigger = "%s.%s" % (self.reference_id, "mp4")
                 except:
+                    raise
                     self.resource.enabled = False
                     self.resource.status = "error"
             

@@ -12,8 +12,10 @@
     <link href='{{STATIC_URL}}site_media/css/reset.css' type="text/css" rel="stylesheet"/>
     <link href="{{STATIC_URL}}frontend/bootstrap/css/bootstrap.css" rel="stylesheet">
     <link href='{{STATIC_URL}}site_media/css/style.css' type="text/css" rel="stylesheet"/>
-	<link href='{{STATIC_URL}}site_media/css/jquery.rating.css' type="text/css" rel="stylesheet"/>
+	<link href='{{STATIC_URL}}frontend/js/openlayers/theme/default/style.css' type="text/css" rel="stylesheet"/>
     <script src="{{STATIC_URL}}frontend/js/jquery/jquery.js"></script>
+	<script src="{{STATIC_URL}}frontend/js/openlayers/OpenLayers.js"></script>
+
     <style type="text/css">
       body {
         padding-top: 60px;
@@ -139,7 +141,9 @@
       
 
     </div><!--/.fluid-container-->
+	
 
+	
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
@@ -158,7 +162,10 @@
     
     <script src="{{STATIC_URL}}frontend/js/jquery.rating.js"></script>
     <script src="{{STATIC_URL}}frontend/js/jquery-ui.js"></script>
-    <script src="{{STATIC_URL}}frontend/js/ratings.js"></script>
+	<script>
+	$('.featured_resource').popover();
+	
+	</script>
 
   </body>
 </html>

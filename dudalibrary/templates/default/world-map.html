@@ -1,0 +1,69 @@
+<div id="map"></div>
+<script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
+<script src="http://openlayers.org/api/OpenLayers.js"></script>
+
+<script>
+  map = new OpenLayers.Map("map");
+  map.addLayer(new OpenLayers.Layer.Google());
+  
+  epsg4326 =  new OpenLayers.Projection("EPSG:4326"); //WGS 1984 projection
+  projectTo = map.getProjectionObject(); //The map projection (Spherical Mercator)
+ 
+  {% if source_points|length == 1 %}
+  
+	center = new OpenLayers.LonLat({{source_points.0.point.x}}, {{source_points.0.point.y}}).transform(epsg4326, projectTo);
+	map.setCenter(center, 3);
+  
+  {% else %}
+
+	center = new OpenLayers.LonLat(273950.30933588, 2230738.2331641)
+	map.setCenter(center, 2);
+  
+  {% endif %}
+	
+
+  var vectorLayer = new OpenLayers.Layer.Vector("Overlay");
+  
+  {% for source in source_points %}
+  var feature = new OpenLayers.Feature.Vector(
+          new OpenLayers.Geometry.Point( {{source.point.0}}, {{source.point.1}} ).transform(epsg4326, projectTo),
+          {description:'{{source}}', url: '{% url "source_details" source.id %}', logo_url: '{% if source.logo %}{{source.logo.url}}{%endif%}'} ,
+          {externalGraphic: 'http://www.openlayers.org/dev/img/marker.png', graphicHeight: 25, graphicWidth: 21, graphicXOffset:-12, graphicYOffset:-25  }
+      );    
+  vectorLayer.addFeatures(feature);
+  {% endfor %}
+
+  map.addLayer(vectorLayer);
+
+  
+  //Add a selector control to the vectorLayer with popup functions
+  var controls = {
+    selector: new OpenLayers.Control.SelectFeature(vectorLayer, { hover:false, onSelect: createPopup, onUnselect: destroyPopup })
+  };
+  function createPopup(feature) {
+	  if (feature.attributes.logo_url){
+		  html_do_popup = '<div class="markerContent"><a href="'+feature.attributes.url+'"><img src="'+feature.attributes.logo_url+'"></a></div>'
+	  }else{
+		  html_do_popup = '<div class="markerContent"><a href="'+feature.attributes.url+'">'+feature.attributes.description+'</a></div>'
+	  }
+    feature.popup = new OpenLayers.Popup.FramedCloud("pop",
+        feature.geometry.getBounds().getCenterLonLat(),
+        null,
+        html_do_popup,
+        null,
+        true,
+        function() { controls['selector'].unselectAll(); }
+    );
+    //feature.popup.closeOnMove = true;
+    map.addPopup(feature.popup);
+  }
+
+  function destroyPopup(feature) {
+    feature.popup.destroy();
+    feature.popup = null;
+  }
+  
+  map.addControl(controls['selector']);
+  controls['selector'].activate();
+    
+</script>

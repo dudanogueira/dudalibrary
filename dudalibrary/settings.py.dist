@@ -212,15 +212,13 @@ INSTALLED_APPS = (
     # third party apps
     'django_extensions',
     'south',
-    'ratings',
     'tagging',
-    'hitcount',
     # duda library apps
     'resources',
     'options',    
     'frontend',
     'curricular',
-    'queue',
+    'resource_queue',
     'haystack',
     'djcelery',
     'kombu.transport.django',

@@ -227,8 +227,8 @@ def resource_identifier(url, plugin_slug=None, request=None):
                 parser.has_internet = False
                 parser.parsed = False
                 print "NO INTERNET"
-
             except:
+                raise
                 parser.parsed = False
                 print "Could not load %s" % parser.PLUGIN_NAME
                 

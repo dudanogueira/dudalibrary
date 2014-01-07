@@ -1,0 +1,81 @@
+<script type="text/javascript">
+
+var map, select;
+
+function init(){
+	map = new OpenLayers.Map('map');
+
+	var wms = new OpenLayers.Layer.WMS(
+		"OpenLayers WMS",
+		"http://vmap0.tiles.osgeo.org/wms/vmap0",
+		{layers: 'basic'}
+	);
+	
+	
+	var osm = new OpenLayers.Layer.OSM("OpenStreetMap", null, {
+		transitionEffect: "resize",
+		attribution: "&copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
+	})
+	
+	
+
+	var sundials = new OpenLayers.Layer.Vector("GML", {
+	         strategies: [new OpenLayers.Strategy.Fixed()],
+	         protocol: new OpenLayers.Protocol.HTTP({
+	            url: "/source/points.txt",
+	            format: new OpenLayers.Format.GeoJSON()
+	         })
+	     });
+
+	map.addLayers([osm, sundials]);
+            
+	select = new OpenLayers.Control.SelectFeature(sundials);
+            
+	sundials.events.on({
+		"featureselected": onFeatureSelect,
+		"featureunselected": onFeatureUnselect
+	});
+
+	map.addControl(select);
+	select.activate();   
+	center = new OpenLayers.LonLat(2817774.6103125, 1682837.6144922)
+	map.setCenter(center, 2);	
+
+}
+function onPopupClose(evt) {
+	select.unselectAll();
+}
+function onFeatureSelect(event) {
+	var feature = event.feature;
+	// Since KML is user-generated, do naive protection against
+	// Javascript.
+	var content = "<h2>"+feature.attributes.name + "</h2><a href='"+feature.attributes.absolute_url + "' class='btn btn-info'>Details on this source.</a>";
+	if (content.search("<script") != -1) {
+		content = "Content contained Javascript! Escaped content below.<br>" + content.replace(/</g, "&lt;");
+	}
+	popup = new OpenLayers.Popup.FramedCloud("test", 
+	feature.geometry.getBounds().getCenterLonLat(),
+	new OpenLayers.Size(400,400),
+	content,
+	null, true, onPopupClose);
+	popup.relativePosition = "bl";
+	feature.popup = popup;
+	map.addPopup(popup);
+}
+function onFeatureUnselect(event) {
+	var feature = event.feature;
+	if(feature.popup) {
+		map.removePopup(feature.popup);
+		feature.popup.destroy();
+		delete feature.popup;
+	}
+}
+</script>
+
+<div id="map">
+	
+</div>
+
+<script>
+init();
+</script>
