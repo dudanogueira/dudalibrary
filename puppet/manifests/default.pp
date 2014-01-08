@@ -11,6 +11,8 @@
 # $ psql
 # $ CREATE USER dudalibrary_user PASSWORD 'dudalibrary_passwd';
 # $ CREATE DATABASE dudalibrary_db OWNER dudalibrary_user TEMPLATE template_postgis ENCODING 'utf8';
+# $ cd /vagrant/
+# $ python manage.py runserver_plus 0.0.0.0:8000
 
 # ATTENTION
 # here we need to be able to run all the provisions and end up with a fully working environment.
@@ -33,7 +35,7 @@ package {
   require  => [Package['python-dev'], Exec['apt-get update']];
 }
 
-$packages = [ 'build-essential', 'python-software-properties', 'ffmpeg', 'ffmpegthumbnailer', 'g++', 'libjpeg' 'libjpeg-dev' 'libfreetype6' 'libfreetype6-dev' 'zlib1g-dev']
+$packages = [ 'build-essential', 'python-software-properties', 'ffmpeg', 'ffmpegthumbnailer', 'g++', 'libjpeg', 'libjpeg-dev', 'libfreetype6', 'libfreetype6-dev', 'zlib1g-dev']
 package {
   $::packages :
     ensure  =>  'installed',

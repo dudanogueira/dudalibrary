@@ -17,7 +17,7 @@ class postgis {
     cwd     => '/var/lib/postgresql',
     group   => 'postgres',
     user    => 'postgres',
-    require => [Service['postgresql'],Package['postgresql-9.1-postgis']],
+    require => [Package['postgresql-9.1-postgis']],
     returns => [0,1],
     #unless  => 'sudo -u postgres psql -l | grep template_postgis | wc -l'
     unless  => '/usr/bin/psql -l | /usr/bin/grep template_postgis | /usr/bin/wc -l'
